@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "615281268609",
+    "project_id": "funmath-80422",
+    "storage_bucket": "funmath-80422.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:615281268609:android:235e6ac97df32dde9bfa80",
+        "android_client_info": {
+          "package_name": "com.client"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "615281268609-hvpoq84eg2dhqfpjfn7sq1jm0o634cva.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKsQWeDEf0icj9hDZ5TJaK6hQoJ4xQVUg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "615281268609-hvpoq84eg2dhqfpjfn7sq1jm0o634cva.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
