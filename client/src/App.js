@@ -6,7 +6,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Toast from 'react-native-toast-message';
 
-import Home from './Home';
+import Home from './screens/Home';
 
 const Stack = createStackNavigator();
 
