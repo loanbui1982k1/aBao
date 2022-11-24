@@ -2,13 +2,18 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Toast from 'react-native-toast-message';
 
 import Home from './screens/Home';
+import Favorite from './screens/Favorite';
+import User from './screens/User';
 
 const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
 const toastConfig = {
   successToast: ({ text1 }) => (
@@ -29,7 +34,9 @@ const toastConfig = {
       }}
     >
       <AntDesign name="checkcircleo" size={24} color="#4BB543" style={{ marginHorizontal: 12 }} />
-      <Text style={{ fontSize: 16, fontWeight: '500', color: '#4BB543', maxWidth: '85%' }}>{text1}</Text>
+      <Text style={{ fontSize: 16, fontWeight: '500', color: '#4BB543', maxWidth: '85%' }}>
+        {text1}
+      </Text>
     </View>
   ),
 
@@ -50,7 +57,9 @@ const toastConfig = {
       }}
     >
       <AntDesign name="closecircleo" size={24} color="#ff3333" style={{ marginHorizontal: 12 }} />
-      <Text style={{ fontSize: 16, fontWeight: '500', color: '#ff3333', maxWidth: '85%' }}>{text1}</Text>
+      <Text style={{ fontSize: 16, fontWeight: '500', color: '#ff3333', maxWidth: '85%' }}>
+        {text1}
+      </Text>
     </View>
   ),
 
@@ -83,10 +92,47 @@ const toastConfig = {
 };
 
 const App = () => {
-
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
+      <Tab.Navigator
+        initialRouteName="Feed"
+        screenOptions={{
+          tabBarActiveTintColor: '#e91e63',
+          headerShown: false,
+        }}
+      >
+        <Tab.Screen
+          name="Trang chủ"
+          component={Home}
+          options={{
+            tabBarLabel: 'Trang chủ',
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons name="home-outline" color={color} size={size} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Yêu thích"
+          component={Favorite}
+          options={{
+            tabBarLabel: 'Yêu thích',
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons name="heart-multiple-outline" color={color} size={size} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Cá nhân"
+          component={User}
+          options={{
+            tabBarLabel: 'Cá nhân',
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons name="emoticon-outline" color={color} size={size} />
+            ),
+          }}
+        />
+      </Tab.Navigator>
+      {/* <Stack.Navigator initialRouteName="Home">
         <Stack.Screen
           name="Home"
           component={Home}
@@ -94,7 +140,7 @@ const App = () => {
             headerShown: false,
           }}
         />
-      </Stack.Navigator>
+      </Stack.Navigator> */}
       <Toast config={toastConfig} />
     </NavigationContainer>
   );

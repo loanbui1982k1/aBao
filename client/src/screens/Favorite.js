@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-function Home({ navigation }) {
+function Favorite({ navigation }) {
   return (
     <View style={styles.body}>
       <Text style={styles.text}>aBao</Text>
@@ -25,4 +25,4 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
 });
-export default Home;
+export default Favorite;
