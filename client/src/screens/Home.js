@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, TextInput, StyleSheet, Text, FlatList, ImageBackground } from 'react-native';
+import { View, TextInput, StyleSheet, Text, ImageBackground, ScrollView } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 import { JSDOM } from 'jsdom';
 import { Readability } from '@mozilla/readability';
 import { API_KEY, BASE_URL } from '../services/constants';
-import { convertApiDate, trimString } from '../services/helper';
+import { trimString } from '../services/helper';
 import NewsCard from '../components/NewsCard';
 
 export const TAGS = [
@@ -65,13 +65,6 @@ function Home({ navigation }) {
             />
           </View>
         </View>
-        {/* <Carousel
-          ref={isCarousel}
-          data={DATA}
-          renderItem={renderItem}
-          sliderWidth={260}
-          itemWidth={260}
-        /> */}
         {hotNews.map((item, index) => (
           <ImageBackground
             key={index}
@@ -80,6 +73,7 @@ function Home({ navigation }) {
                 item.urlToImage ||
                 'https://qph.cf2.quoracdn.net/main-qimg-3d69658bf00b1e706b75162a50d19d6c-pjlq',
             }}
+            blurRadius={8}
             resizeMode="cover"
             style={styles.image}
             imageStyle={{
@@ -99,25 +93,40 @@ function Home({ navigation }) {
             </View>
           </ImageBackground>
         ))}
+
       </View>
       <View
         style={{
           flexDirection: 'row',
           marginLeft: 16,
+          marginRight: 16,
           marginBottom: 16,
           marginTop: 16,
+          alignItems: 'center',
         }}
       >
-        {TAGS.map((item, index) => (
-          <View key={index} style={item.selected ? styles.tag_selected : styles.tag}>
-            <Text style={item.selected ? styles.text : styles.text_tag}>{item.title}</Text>
-          </View>
-        ))}
+        <ScrollView
+          showsHorizontalScrollIndicator={false}
+          horizontal={true}
+        >
+          {TAGS.map((item, index) => (
+            <View key={index} style={item.selected ? styles.tag_selected : styles.tag}>
+              <Text style={item.selected ? styles.text : styles.text_tag}>{item.title}</Text>
+            </View>
+          ))}
+        </ScrollView>
       </View>
-      {news.map((item, index) => {
-        return <NewsCard key={index} item={item} />;
-      })}
-    </View>
+
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+      >
+        {news.map((item, index) => {
+          return <NewsCard key={index} item={item} />;
+        })}
+      </ScrollView>
+
+    </View >
   );
 }
 
@@ -189,7 +198,11 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     paddingRight: 16,
     marginLeft: 16,
-    marginRight: 24,
+    marginRight: 16,
+  },
+  text_author: {
+    color: '#fff',
+    fontSize: 14,
   },
   news_laster_tittle: {
     color: '#fff',
@@ -198,7 +211,7 @@ const styles = StyleSheet.create({
   },
   tag: {
     height: '100%',
-    width: '25%',
+    width: '20%',
     height: 40,
     borderWidth: 1,
     borderColor: '#A6A6A6',
@@ -209,7 +222,7 @@ const styles = StyleSheet.create({
   },
   tag_selected: {
     height: '100%',
-    width: '25%',
+    width: '20%',
     height: 40,
     backgroundColor: '#FF3A44',
     borderWidth: 1,

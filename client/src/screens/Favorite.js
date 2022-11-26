@@ -1,27 +1,10 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, TextInput, ImageBackground } from 'react-native';
+import { View, StyleSheet, Text, TextInput, ScrollView } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import NewsCard from '../components/NewsCard';
 import { API_KEY, BASE_URL } from '../services/constants';
 import { TAGS } from './Home';
-
-const NEWS = [
-  {
-    title: 'Sở Tài nguyên và Môi trường thông tin vụ nước ngập khu dân cư ở TP.HCM có màu đỏ',
-    author: 'Matt Villano',
-    date: 'Chủ nhật, 09/05/2021',
-    image:
-      'https://thuthuatnhanh.com/wp-content/uploads/2022/06/anh-meo-Ba-Tu-mau-den-mat-vang-dep.jpg',
-  },
-  {
-    title: 'Sở Tài nguyên và Môi trường thông tin vụ nước ngập khu dân cư ở TP.HCM có màu đỏ',
-    author: 'Matt Villano',
-    date: 'Chủ nhật, 09/05/2021',
-    image:
-      'https://thuthuatnhanh.com/wp-content/uploads/2022/06/anh-meo-Ba-Tu-mau-den-mat-vang-dep.jpg',
-  },
-];
 
 function Favorite({ navigation }) {
   const [news, setNews] = useState([]);
@@ -51,25 +34,30 @@ function Favorite({ navigation }) {
         style={{
           flexDirection: 'row',
           marginLeft: 16,
+          marginRight: 16,
           marginBottom: 16,
           marginTop: 16,
+          alignItems: 'center',
         }}
       >
-        {TAGS.map((item, index) => {
-          return item.selected ? (
-            <View key={index} style={styles.tag_selected}>
-              <Text style={styles.text}>{item.title}</Text>
+        <ScrollView
+          showsHorizontalScrollIndicator={false}
+          horizontal={true}
+        >
+          {TAGS.map((item, index) => (
+            <View key={index} style={item.selected ? styles.tag_selected : styles.tag}>
+              <Text style={item.selected ? styles.text : styles.text_tag}>{item.title}</Text>
             </View>
-          ) : (
-            <View key={index} style={styles.tag}>
-              <Text style={styles.text_tag}>{item.title}</Text>
-            </View>
-          );
-        })}
+          ))}
+        </ScrollView>
       </View>
-      {news.map((item, index) => {
-        return <NewsCard key={index} item={item} />;
-      })}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+      >
+        {news.map((item, index) => {
+          return <NewsCard key={index} item={item} />;
+        })}
+      </ScrollView>
     </View>
   );
 }
@@ -132,7 +120,7 @@ const styles = StyleSheet.create({
   },
   tag: {
     height: '100%',
-    width: '25%',
+    width: '20%',
     height: 40,
     borderWidth: 1,
     borderColor: '#A6A6A6',
@@ -143,7 +131,7 @@ const styles = StyleSheet.create({
   },
   tag_selected: {
     height: '100%',
-    width: '25%',
+    width: '20%',
     height: 40,
     backgroundColor: '#FF3A44',
     borderWidth: 1,
