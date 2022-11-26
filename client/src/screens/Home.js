@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, TextInput, StyleSheet, Text, FlatList, ImageBackground } from 'react-native';
+import { View, TextInput, StyleSheet, Text, ImageBackground } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import NewsCard from '../components/NewsCard';
 
 const DATA = [
   {
@@ -12,10 +13,18 @@ const DATA = [
 ];
 
 const TAGS = [
-  { title: "Xã hội" },
-  { title: "Văn hóa" },
-  { title: "Kinh tế" },
-  { title: "Giáo dục" },
+  {
+    title: "Công nghệ",
+    selected: true
+  },
+  {
+    title: "Kinh tế",
+    selected: false
+  },
+  {
+    title: "Giáo dục",
+    selected: false
+  },
 ];
 
 const NEWS = [
@@ -34,42 +43,6 @@ const NEWS = [
 ]
 
 function Home({ navigation }) {
-  const isCarousel = React.useRef(null)
-  const renderItem = ({ item }) => (
-    <View>
-      <ImageBackground source={{ uri: item.image }} resizeMode="cover" style={styles.image} imageStyle={{
-        borderRadius: 15
-      }}>
-        <View style={{
-          paddingBottom: 40
-        }}>
-          <Text style={styles.text_author}>Được đăng bởi {item.author}</Text>
-          <Text style={styles.news_laster_tittle}>{item.title}</Text>
-        </View>
-        <View>
-          <Text style={styles.text}>{item.data}</Text>
-        </View>
-      </ImageBackground>
-    </View>
-  );
-  const renderNews = ({ item }) => (
-    <View>
-      <ImageBackground source={{ uri: item.image }} resizeMode="cover" style={styles.image_news} imageStyle={{
-        borderRadius: 15
-      }}>
-        <Text style={styles.news_title}>{item.title}</Text>
-        <View style={{
-          flex: 1,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          paddingTop: 30
-        }}>
-          <Text style={styles.text_author}>{item.author}</Text>
-          <Text style={styles.text_author}>{item.date}</Text>
-        </View>
-      </ImageBackground>
-    </View>
-  );
   return (
     <View style={styles.body}>
       <View style={styles.header}>
@@ -81,8 +54,7 @@ function Home({ navigation }) {
           <MaterialCommunityIcons name="magnify" color="#818181" size={16} style={styles.icon} />
         </View>
         <View style={styles.header_ring}>
-          <MaterialCommunityIcons name="bell-ring" color="#fff" size={16} style={{
-          }} />
+          <MaterialCommunityIcons name="bell-ring" color="#fff" size={16} />
         </View>
       </View>
       <View style={styles.news_laster}>
@@ -105,27 +77,50 @@ function Home({ navigation }) {
           sliderWidth={260}
           itemWidth={260}
         /> */}
-        <FlatList
-          data={DATA}
-          renderItem={renderItem}
-        />
+        {
+          DATA.map((item, index) => {
+            return (
+              <ImageBackground key={index} source={{ uri: item.image }} resizeMode="cover" style={styles.image} imageStyle={{
+                borderRadius: 15
+              }}>
+                <View style={{
+                  paddingBottom: 40
+                }}>
+                  <Text style={styles.text_author}>Được đăng bởi {item.author}</Text>
+                  <Text style={styles.news_laster_tittle}>{item.title}</Text>
+                </View>
+                <View>
+                  <Text style={styles.text}>{item.data}</Text>
+                </View>
+              </ImageBackground>
+            )
+          })
+        }
       </View>
       <View style={{
         flexDirection: 'row',
-        marginLeft: 24,
-        marginBottom: 10,
-        marginTop: 10
+        marginLeft: 16,
+        marginBottom: 16,
+        marginTop: 16
       }}>
         {TAGS.map((item, index) => {
-          return (<View key={index} style={styles.tag}>
-            <Text style={styles.text}>{item.title}</Text>
-          </View>)
+          return item.selected ?
+            (<View key={index} style={styles.tag_selected}>
+              <Text style={styles.text}>{item.title}</Text>
+            </View>)
+            :
+            (<View key={index} style={styles.tag}>
+              <Text style={styles.text_tag}>{item.title}</Text>
+            </View>)
         })}
       </View>
-      <FlatList
-        data={NEWS}
-        renderItem={renderNews}
-      />
+      {
+        NEWS.map((item, index) => {
+          return (
+            <NewsCard key={index} item={item} />
+          )
+        })
+      }
     </View>
   );
 }
@@ -164,7 +159,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 36,
-    width: 300,
+    width: '80%',
     paddingLeft: 24,
     borderBottomWidth: 1,
     borderLeftWidth: 1,
@@ -193,51 +188,48 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   image: {
-    flex: 1,
     justifyContent: "center",
     height: 210,
     paddingLeft: 16,
     paddingRight: 16,
-    marginLeft: 24,
+    marginLeft: 16,
     marginRight: 24
-  },
-  text_author: {
-    color: "#fff",
-    fontSize: 14
   },
   news_laster_tittle: {
     color: "#fff",
     fontWeight: 'bold',
     fontSize: 20
   },
-  news_title: {
-    fontSize: 14,
-    color: "#fff",
-    fontStyle: 'italic'
-  },
   tag: {
     height: '100%',
-    width: '20%',
+    width: '25%',
     height: 40,
-    backgroundColor: '#FF3A44',
+    borderWidth: 1,
+    borderColor: '#A6A6A6',
     marginRight: 16,
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center'
   },
+  tag_selected: {
+    height: '100%',
+    width: '25%',
+    height: 40,
+    backgroundColor: '#FF3A44',
+    borderWidth: 1,
+    borderColor: '#A6A6A6',
+    marginRight: 16,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  text_tag: {
+    color: '#000',
+    fontSize: 13
+  },
   text: {
     color: '#fff',
     fontSize: 13
   },
-  image_news: {
-    flex: 1,
-    justifyContent: "center",
-    height: 100,
-    paddingLeft: 16,
-    paddingRight: 16,
-    marginLeft: 24,
-    marginRight: 24,
-    marginBottom: 10
-  }
 });
 export default Home;
