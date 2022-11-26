@@ -1,39 +1,37 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, TextInput, ImageBackground } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import NewsCard from '../components/NewsCard';
-
-const TAGS = [
-  {
-    title: "Lọc",
-    selected: true
-  },
-  {
-    title: "Văn hóa",
-    selected: false
-  },
-  {
-    title: "Kinh tế",
-    selected: false
-  },
-];
+import { API_KEY, BASE_URL } from '../services/constants';
+import { TAGS } from './Home';
 
 const NEWS = [
   {
-    title: "Sở Tài nguyên và Môi trường thông tin vụ nước ngập khu dân cư ở TP.HCM có màu đỏ",
-    author: "Matt Villano",
-    date: "Chủ nhật, 09/05/2021",
-    image: "https://thuthuatnhanh.com/wp-content/uploads/2022/06/anh-meo-Ba-Tu-mau-den-mat-vang-dep.jpg"
+    title: 'Sở Tài nguyên và Môi trường thông tin vụ nước ngập khu dân cư ở TP.HCM có màu đỏ',
+    author: 'Matt Villano',
+    date: 'Chủ nhật, 09/05/2021',
+    image:
+      'https://thuthuatnhanh.com/wp-content/uploads/2022/06/anh-meo-Ba-Tu-mau-den-mat-vang-dep.jpg',
   },
   {
-    title: "Sở Tài nguyên và Môi trường thông tin vụ nước ngập khu dân cư ở TP.HCM có màu đỏ",
-    author: "Matt Villano",
-    date: "Chủ nhật, 09/05/2021",
-    image: "https://thuthuatnhanh.com/wp-content/uploads/2022/06/anh-meo-Ba-Tu-mau-den-mat-vang-dep.jpg"
-  }
-]
+    title: 'Sở Tài nguyên và Môi trường thông tin vụ nước ngập khu dân cư ở TP.HCM có màu đỏ',
+    author: 'Matt Villano',
+    date: 'Chủ nhật, 09/05/2021',
+    image:
+      'https://thuthuatnhanh.com/wp-content/uploads/2022/06/anh-meo-Ba-Tu-mau-den-mat-vang-dep.jpg',
+  },
+];
 
 function Favorite({ navigation }) {
+  const [news, setNews] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(BASE_URL + '/top-headlines?country=us&pageSize=10' + API_KEY)
+      .then((res) => setNews(res.data.articles));
+  }, []);
+
   return (
     <View>
       <View style={styles.topTitle}>
@@ -42,47 +40,43 @@ function Favorite({ navigation }) {
       </View>
       <View style={styles.header}>
         <View style={styles.search_input}>
-          <TextInput
-            style={styles.input}
-            placeholder="Tìm kiếm"
-          />
+          <TextInput style={styles.input} placeholder="Tìm kiếm" />
           <MaterialCommunityIcons name="magnify" color="#818181" size={16} style={styles.icon} />
         </View>
         <View style={styles.header_ring}>
           <MaterialCommunityIcons name="bell-ring" color="#fff" size={16} />
         </View>
       </View>
-      <View style={{
-        flexDirection: 'row',
-        marginLeft: 16,
-        marginBottom: 16,
-        marginTop: 16
-      }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          marginLeft: 16,
+          marginBottom: 16,
+          marginTop: 16,
+        }}
+      >
         {TAGS.map((item, index) => {
-          return item.selected ?
-            (<View key={index} style={styles.tag_selected}>
+          return item.selected ? (
+            <View key={index} style={styles.tag_selected}>
               <Text style={styles.text}>{item.title}</Text>
-            </View>)
-            :
-            (<View key={index} style={styles.tag}>
+            </View>
+          ) : (
+            <View key={index} style={styles.tag}>
               <Text style={styles.text_tag}>{item.title}</Text>
-            </View>)
+            </View>
+          );
         })}
       </View>
-      {
-        NEWS.map((item, index) => {
-          return (
-            <NewsCard key={index} item={item} />
-          )
-        })
-      }
+      {news.map((item, index) => {
+        return <NewsCard key={index} item={item} />;
+      })}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   body: {
-    flex: 1
+    flex: 1,
   },
   topTitle: {
     flexDirection: 'row',
@@ -98,7 +92,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     marginTop: 16,
-    marginLeft: 16
+    marginLeft: 16,
   },
   search_input: {
     flex: 1,
@@ -114,7 +108,7 @@ const styles = StyleSheet.create({
     borderColor: '#818181',
     paddingRight: 10,
     borderBottomRightRadius: 20,
-    borderTopRightRadius: 20
+    borderTopRightRadius: 20,
   },
   input: {
     height: 36,
@@ -125,7 +119,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: '#818181',
     borderTopLeftRadius: 20,
-    borderBottomLeftRadius: 20
+    borderBottomLeftRadius: 20,
   },
   header_ring: {
     right: 24,
@@ -134,7 +128,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FF3A44',
-    borderRadius: 45
+    borderRadius: 45,
   },
   tag: {
     height: '100%',
@@ -145,7 +139,7 @@ const styles = StyleSheet.create({
     marginRight: 16,
     borderRadius: 30,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   tag_selected: {
     height: '100%',
@@ -157,15 +151,15 @@ const styles = StyleSheet.create({
     marginRight: 16,
     borderRadius: 30,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   text_tag: {
     color: '#000',
-    fontSize: 13
+    fontSize: 13,
   },
   text: {
     color: '#fff',
-    fontSize: 13
+    fontSize: 13,
   },
 });
 export default Favorite;

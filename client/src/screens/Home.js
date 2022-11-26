@@ -1,56 +1,42 @@
-import React from 'react';
-import { View, TextInput, StyleSheet, Text, ImageBackground } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, TextInput, StyleSheet, Text, FlatList, ImageBackground } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import axios from 'axios';
+import { JSDOM } from 'jsdom';
+import { Readability } from '@mozilla/readability';
+import { API_KEY, BASE_URL } from '../services/constants';
+import { convertApiDate, trimString } from '../services/helper';
 import NewsCard from '../components/NewsCard';
 
-const DATA = [
-  {
-    title: "Các nhà đầu tư tiền điện tử nên sẵn sàng để mất tất cả tiền của họ, thống đốc BOE nói",
-    author: "Ryan Browne",
-    data: "“Tôi sẽ nói lại điều này rất thẳng thắn,” anh ấy nói thêm. “Chỉ mua chúng nếu bạn chuẩn bị mất tất cả tiền của mình.”",
-    image: "https://thuthuatnhanh.com/wp-content/uploads/2022/06/anh-meo-Ba-Tu-mau-den-mat-vang-dep.jpg"
-  },
+export const TAGS = [
+  { title: 'Kinh tế', api: 'business', selected: true },
+  { title: 'Giải trí', api: 'entertainment', selected: false },
+  { title: 'Chung', api: 'general', selected: false },
+  { title: 'Sức khỏe', api: 'health', selected: false },
+  { title: 'Khoa học', api: 'science', selected: false },
+  { title: 'Thể thao', api: 'sports', selected: false },
+  { title: 'Công nghệ', api: 'technology', selected: false },
 ];
-
-const TAGS = [
-  {
-    title: "Công nghệ",
-    selected: true
-  },
-  {
-    title: "Kinh tế",
-    selected: false
-  },
-  {
-    title: "Giáo dục",
-    selected: false
-  },
-];
-
-const NEWS = [
-  {
-    title: "Sở Tài nguyên và Môi trường thông tin vụ nước ngập khu dân cư ở TP.HCM có màu đỏ",
-    author: "Matt Villano",
-    date: "Chủ nhật, 09/05/2021",
-    image: "https://thuthuatnhanh.com/wp-content/uploads/2022/06/anh-meo-Ba-Tu-mau-den-mat-vang-dep.jpg"
-  },
-  {
-    title: "Sở Tài nguyên và Môi trường thông tin vụ nước ngập khu dân cư ở TP.HCM có màu đỏ",
-    author: "Matt Villano",
-    date: "Chủ nhật, 09/05/2021",
-    image: "https://thuthuatnhanh.com/wp-content/uploads/2022/06/anh-meo-Ba-Tu-mau-den-mat-vang-dep.jpg"
-  }
-]
 
 function Home({ navigation }) {
+  const isCarousel = React.useRef(null);
+  const [hotNews, setHotNews] = useState([]);
+  const [news, setNews] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(BASE_URL + '/top-headlines?country=us&sortBy=popularity&pageSize=1' + API_KEY)
+      .then((res) => setHotNews(res.data.articles));
+    axios
+      .get(BASE_URL + '/top-headlines?country=us&pageSize=20' + API_KEY)
+      .then((res) => setNews(res.data.articles));
+  }, []);
+
   return (
     <View style={styles.body}>
       <View style={styles.header}>
         <View style={styles.search_input}>
-          <TextInput
-            style={styles.input}
-            placeholder="Tìm kiếm"
-          />
+          <TextInput style={styles.input} placeholder="Tìm kiếm" />
           <MaterialCommunityIcons name="magnify" color="#818181" size={16} style={styles.icon} />
         </View>
         <View style={styles.header_ring}>
@@ -61,13 +47,22 @@ function Home({ navigation }) {
         <View style={styles.news_laster_header}>
           <Text style={styles.title}>Mới nhất</Text>
           <View style={styles.all_news_laster}>
-            <Text style={{
-              color: '#0080FF',
-              fontSize: 14
-            }}>Tất cả</Text>
-            <MaterialCommunityIcons name="arrow-right" color="#0080FF" size={16} style={{
-              paddingLeft: 16
-            }} />
+            <Text
+              style={{
+                color: '#0080FF',
+                fontSize: 14,
+              }}
+            >
+              Tất cả
+            </Text>
+            <MaterialCommunityIcons
+              name="arrow-right"
+              color="#0080FF"
+              size={16}
+              style={{
+                paddingLeft: 16,
+              }}
+            />
           </View>
         </View>
         {/* <Carousel
@@ -77,69 +72,70 @@ function Home({ navigation }) {
           sliderWidth={260}
           itemWidth={260}
         /> */}
-        {
-          DATA.map((item, index) => {
-            return (
-              <ImageBackground key={index} source={{ uri: item.image }} resizeMode="cover" style={styles.image} imageStyle={{
-                borderRadius: 15
-              }}>
-                <View style={{
-                  paddingBottom: 40
-                }}>
-                  <Text style={styles.text_author}>Được đăng bởi {item.author}</Text>
-                  <Text style={styles.news_laster_tittle}>{item.title}</Text>
-                </View>
-                <View>
-                  <Text style={styles.text}>{item.data}</Text>
-                </View>
-              </ImageBackground>
-            )
-          })
-        }
+        {hotNews.map((item, index) => (
+          <ImageBackground
+            key={index}
+            source={{
+              uri:
+                item.urlToImage ||
+                'https://qph.cf2.quoracdn.net/main-qimg-3d69658bf00b1e706b75162a50d19d6c-pjlq',
+            }}
+            resizeMode="cover"
+            style={styles.image}
+            imageStyle={{
+              borderRadius: 15,
+            }}
+          >
+            <View
+              style={{
+                paddingBottom: 40,
+              }}
+            >
+              <Text style={styles.text_author}>Được đăng bởi {trimString(item.author, 20)}</Text>
+              <Text style={styles.news_laster_tittle}>{trimString(item.title)}</Text>
+            </View>
+            <View>
+              <Text style={styles.text}>{trimString(item.description, 200)}</Text>
+            </View>
+          </ImageBackground>
+        ))}
       </View>
-      <View style={{
-        flexDirection: 'row',
-        marginLeft: 16,
-        marginBottom: 16,
-        marginTop: 16
-      }}>
-        {TAGS.map((item, index) => {
-          return item.selected ?
-            (<View key={index} style={styles.tag_selected}>
-              <Text style={styles.text}>{item.title}</Text>
-            </View>)
-            :
-            (<View key={index} style={styles.tag}>
-              <Text style={styles.text_tag}>{item.title}</Text>
-            </View>)
-        })}
+      <View
+        style={{
+          flexDirection: 'row',
+          marginLeft: 16,
+          marginBottom: 16,
+          marginTop: 16,
+        }}
+      >
+        {TAGS.map((item, index) => (
+          <View key={index} style={item.selected ? styles.tag_selected : styles.tag}>
+            <Text style={item.selected ? styles.text : styles.text_tag}>{item.title}</Text>
+          </View>
+        ))}
       </View>
-      {
-        NEWS.map((item, index) => {
-          return (
-            <NewsCard key={index} item={item} />
-          )
-        })
-      }
+      {news.map((item, index) => {
+        return <NewsCard key={index} item={item} />;
+      })}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   body: {
-    flex: 1
+    flex: 1,
   },
   title: {
     fontSize: 20,
     width: '80%',
     fontWeight: 'bold',
     color: 'black',
-    paddingLeft: 16
+    paddingLeft: 16,
   },
   header: {
     flexDirection: 'row',
     marginTop: 16,
-    marginLeft: 16
+    marginLeft: 16,
   },
   search_input: {
     flex: 1,
@@ -155,7 +151,7 @@ const styles = StyleSheet.create({
     borderColor: '#818181',
     paddingRight: 10,
     borderBottomRightRadius: 20,
-    borderTopRightRadius: 20
+    borderTopRightRadius: 20,
   },
   input: {
     height: 36,
@@ -166,7 +162,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: '#818181',
     borderTopLeftRadius: 20,
-    borderBottomLeftRadius: 20
+    borderBottomLeftRadius: 20,
   },
   header_ring: {
     right: 24,
@@ -175,30 +171,30 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FF3A44',
-    borderRadius: 45
+    borderRadius: 45,
   },
   news_laster_header: {
     display: 'flex',
     flexDirection: 'row',
     marginBottom: 20,
     marginTop: 16,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   all_news_laster: {
     flexDirection: 'row',
   },
   image: {
-    justifyContent: "center",
+    justifyContent: 'center',
     height: 210,
     paddingLeft: 16,
     paddingRight: 16,
     marginLeft: 16,
-    marginRight: 24
+    marginRight: 24,
   },
   news_laster_tittle: {
-    color: "#fff",
+    color: '#fff',
     fontWeight: 'bold',
-    fontSize: 20
+    fontSize: 20,
   },
   tag: {
     height: '100%',
@@ -209,7 +205,7 @@ const styles = StyleSheet.create({
     marginRight: 16,
     borderRadius: 30,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   tag_selected: {
     height: '100%',
@@ -221,15 +217,15 @@ const styles = StyleSheet.create({
     marginRight: 16,
     borderRadius: 30,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   text_tag: {
     color: '#000',
-    fontSize: 13
+    fontSize: 13,
   },
   text: {
     color: '#fff',
-    fontSize: 13
+    fontSize: 13,
   },
 });
 export default Home;
