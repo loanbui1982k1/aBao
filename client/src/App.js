@@ -10,7 +10,6 @@ import Toast from 'react-native-toast-message';
 
 import Home from './screens/Home';
 import Favorite from './screens/Favorite';
-import User from './screens/User';
 import Login from './screens/Login';
 import Signup from './screens/Signup';
 import Profile from './screens/Profile';
@@ -95,48 +94,46 @@ const toastConfig = {
   ),
 };
 
+const User = () => {
+  return (
+    <Stack.Navigator initialRouteName="Login">
+      <Stack.Screen
+        name="Login"
+        component={Login}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Signup"
+        component={Signup}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          headerShown: false,
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Setting">
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="Signup"
-          component={Signup}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="Profile"
-          component={Profile}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="Setting"
-          component={Setting}
-          options={{
-            headerShown: false,
-          }}
-        />
-      </Stack.Navigator>
-      {/* <Tab.Navigator
-        initialRouteName="Trang chủ"
+      <Tab.Navigator
+        initialRouteName="Home"
         screenOptions={{
           tabBarActiveTintColor: '#e91e63',
           headerShown: false,
         }}
       >
         <Tab.Screen
-          name="Trang chủ"
+          name="Home"
           component={Home}
           options={{
             tabBarLabel: 'Trang chủ',
@@ -145,9 +142,9 @@ const App = () => {
             ),
           }}
         />
-        
+
         <Tab.Screen
-          name="Yêu thích"
+          name="Favorite"
           component={Favorite}
           options={{
             tabBarLabel: 'Yêu thích',
@@ -157,7 +154,7 @@ const App = () => {
           }}
         />
         <Tab.Screen
-          name="Cá nhân"
+          name="User"
           component={User}
           options={{
             tabBarLabel: 'Cá nhân',
@@ -165,9 +162,18 @@ const App = () => {
               <MaterialCommunityIcons name="emoticon-outline" color={color} size={size} />
             ),
           }}
-      
         />
-      </Tab.Navigator> */}
+        <Tab.Screen
+          name="Setting"
+          component={Setting}
+          options={{
+            tabBarLabel: 'Cài đặt',
+            tabBarIcon: ({ color, size }) => (
+              <MaterialCommunityIcons name="cog-outline" color={color} size={size} />
+            ),
+          }}
+        />
+      </Tab.Navigator>
       <Toast config={toastConfig} />
     </NavigationContainer>
   );
