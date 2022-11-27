@@ -11,6 +11,10 @@ import Toast from 'react-native-toast-message';
 import Home from './screens/Home';
 import Favorite from './screens/Favorite';
 import User from './screens/User';
+import Login from './screens/Login';
+import Signup from './screens/Signup';
+import Profile from './screens/Profile';
+import Setting from './screens/Setting';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -94,8 +98,38 @@ const toastConfig = {
 const App = () => {
   return (
     <NavigationContainer>
-      <Tab.Navigator
-        initialRouteName="Feed"
+      <Stack.Navigator initialRouteName="Setting">
+        <Stack.Screen
+          name="Login"
+          component={Login}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Signup"
+          component={Signup}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={Profile}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Setting"
+          component={Setting}
+          options={{
+            headerShown: false,
+          }}
+        />
+      </Stack.Navigator>
+      {/* <Tab.Navigator
+        initialRouteName="Trang chủ"
         screenOptions={{
           tabBarActiveTintColor: '#e91e63',
           headerShown: false,
@@ -111,6 +145,7 @@ const App = () => {
             ),
           }}
         />
+        
         <Tab.Screen
           name="Yêu thích"
           component={Favorite}
@@ -130,17 +165,9 @@ const App = () => {
               <MaterialCommunityIcons name="emoticon-outline" color={color} size={size} />
             ),
           }}
+      
         />
-      </Tab.Navigator>
-      {/* <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen
-          name="Home"
-          component={Home}
-          options={{
-            headerShown: false,
-          }}
-        />
-      </Stack.Navigator> */}
+      </Tab.Navigator> */}
       <Toast config={toastConfig} />
     </NavigationContainer>
   );
