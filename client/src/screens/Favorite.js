@@ -40,10 +40,7 @@ function Favorite({ navigation }) {
           alignItems: 'center',
         }}
       >
-        <ScrollView
-          showsHorizontalScrollIndicator={false}
-          horizontal={true}
-        >
+        <ScrollView showsHorizontalScrollIndicator={false} horizontal={true}>
           {TAGS.map((item, index) => (
             <View key={index} style={item.selected ? styles.tag_selected : styles.tag}>
               <Text style={item.selected ? styles.text : styles.text_tag}>{item.title}</Text>
@@ -51,11 +48,9 @@ function Favorite({ navigation }) {
           ))}
         </ScrollView>
       </View>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView showsVerticalScrollIndicator={false}>
         {news.map((item, index) => {
-          return <NewsCard key={index} item={item} />;
+          return <NewsCard key={index} item={item} navigation={navigation} />;
         })}
       </ScrollView>
     </View>

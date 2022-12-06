@@ -9,8 +9,10 @@ const db = require('./models');
 
 // Routers
 
+const defaultRouter = require('./routes/Default');
 const userRouter = require('./routes/User');
 const detailRouter = require('./routes/Detail');
+app.use('/', defaultRouter);
 app.use('/users', userRouter);
 app.use('/detail', detailRouter);
 

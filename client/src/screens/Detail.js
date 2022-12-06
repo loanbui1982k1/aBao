@@ -28,7 +28,6 @@ function Detail(props) {
     try {
       axios.get(API_URL + `/detail?url=${url}`).then((res) => {
         if (res?.data?.success) setContent(res.data.data);
-        else setContent('SOS');
       });
     } catch (error) {}
   }, []);
