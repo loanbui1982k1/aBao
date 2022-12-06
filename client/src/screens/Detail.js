@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   View,
@@ -11,17 +11,34 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { API_URL } from '../services/constants';
+import axios from 'axios';
+import { convertApiDate } from '../services/helper';
 
-function Detail({ navigation }) {
+function Detail(props) {
+  const item = props.route.params.item;
   const window = useWindowDimensions();
   const [topTitle, setTopTitle] = useState(window.width);
   const [heart, setHeart] = useState(false);
   const [updateView, setUpdateView] = useState(false);
+  const [content, setContent] = useState('');
+
+  useEffect(() => {
+    const url = props.route.params.item.url;
+    try {
+      axios.get(API_URL + `/detail?url=${url}`).then((res) => {
+        if (res?.data?.success) setContent(res.data.data);
+        else setContent('SOS');
+      });
+    } catch (error) {}
+  }, []);
 
   return (
     <SafeAreaView>
       <View style={[styles.title, { marginTop: updateView ? 0 : window.width * 0.65 - topTitle }]}>
-        <Text style={{ display: updateView ? 'none' : 'flex' }}>Chủ nhật, 09/05/2021</Text>
+        <Text style={{ display: updateView ? 'none' : 'flex' }}>
+          {convertApiDate(item.publishedAt || '')}
+        </Text>
         <Text
           style={[
             styles.text,
@@ -31,7 +48,7 @@ function Detail({ navigation }) {
             },
           ]}
         >
-          Các nhà đầu tư tiền điện tử nên sẵn sàng để mất tất cả tiền của họ, thống đốc BOE nói
+          {item.title}
         </Text>
         <Text
           style={[
@@ -41,10 +58,11 @@ function Detail({ navigation }) {
             },
           ]}
         >
-          Đăng bởi Ryan Browne
+          Đăng bởi {item.author}
         </Text>
       </View>
       <Pressable
+        onPress={() => props.navigation.goBack()}
         style={[
           styles.linearGradient,
           {
@@ -88,49 +106,13 @@ function Detail({ navigation }) {
               height: window.width,
             }}
             source={{
-              uri: 'https://cutecatsinhats-x7v0etsjgzjvirs3.netdna-ssl.com/wp-content/uploads/2016/03/reindeer-hat-kitty.jpg',
+              uri:
+                item.urlToImage ||
+                'https://qph.cf2.quoracdn.net/main-qimg-3d69658bf00b1e706b75162a50d19d6c-pjlq',
             }}
           />
           <View style={styles.content}>
-            <Text style={[styles.text]}>
-              <Text style={[styles.boldText]}>LONDON</Text> — Tiền điện tử “không có giá trị nội
-              tại” và những người đầu tư vào chúng nên sẵn sàng để mất tất cả tiền của mình, Thống
-              đốc Ngân hàng Trung ương Anh, Andrew Bailey cho biết.
-            </Text>
-            <Text style={[styles.text]}>
-              Các loại tiền kỹ thuật số như bitcoin, ether và thậm chí cả dogecoin đã rơi vào tình
-              trạng giảm giá trong năm nay, nhắc nhở một số nhà đầu tư về bong bóng tiền điện tử năm
-              2017, trong đó bitcoin tăng vọt lên mức 20.000 đô la, chỉ giảm xuống mức 3.122 đô la
-              một năm sau đó. Khi được hỏi trong một cuộc họp báo hôm thứ Năm về giá trị gia tăng
-              của tiền điện tử, Bailey cho biết: “Chúng không có giá trị nội tại.
-            </Text>
-            <Text style={[styles.text]}>
-              Điều đó không có nghĩa là mọi người không coi trọng chúng, bởi vì “Tôi sẽ nói lại điều
-              này rất thẳng thắn,” anh ấy nói thêm. “Chỉ mua chúng nếu bạn chuẩn bị mất tất cả tiền
-              của mình.” Nhận xét của Bailey lặp lại cảnh báo tương tự từ Cơ quan quản lý tài chính
-              của Vương quốc Anh.
-            </Text>
-            <Text style={[styles.text]}>
-              Điều đó không có nghĩa là mọi người không coi trọng chúng, bởi vì “Tôi sẽ nói lại điều
-              này rất thẳng thắn,” anh ấy nói thêm. “Chỉ mua chúng nếu bạn chuẩn bị mất tất cả tiền
-              của mình.” Nhận xét của Bailey lặp lại cảnh báo tương tự từ Cơ quan quản lý tài chính
-              của Vương quốc Anh.
-            </Text>
-            <Text style={[styles.text]}>
-              Điều đó không có nghĩa là mọi người không coi trọng chúng, bởi vì “Tôi sẽ nói lại điều
-              này rất thẳng thắn,” anh ấy nói thêm. “Chỉ mua chúng nếu bạn chuẩn bị mất tất cả tiền
-              của mình.” Nhận xét của Bailey lặp lại cảnh báo tương tự từ Cơ quan quản lý tài chính
-              của Vương quốc Anh.
-            </Text>
-            <Text style={[styles.text]}>
-              Cơ quan giám sát dịch vụ tài chính cho biết: “Đầu tư vào tiền điện tử, hoặc các khoản
-              đầu tư và cho vay liên quan đến chúng, thường liên quan đến việc chấp nhận rủi ro rất
-              cao với tiền của nhà đầu tư”. "Nếu người tiêu dùng đầu tư vào những loại sản phẩm này,
-              họ nên chuẩn bị sẵn sàng để mất tất cả tiền của họ." Bailey, người trước đây là giám
-              đốc điều hành của FCA, từ lâu đã là một người hoài nghi về tiền điện tử. Vào năm 2017,
-              ông cảnh báo: “Nếu bạn muốn đầu tư vào bitcoin, hãy chuẩn bị sẵn sàng để mất tất cả
-              tiền của mình”.
-            </Text>
+            <Text style={[styles.text]}>{content}</Text>
           </View>
         </View>
       </ScrollView>

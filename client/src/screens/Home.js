@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { View, TextInput, StyleSheet, Text, ImageBackground, ScrollView } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
-import { JSDOM } from 'jsdom';
-import { Readability } from '@mozilla/readability';
 import { API_KEY, BASE_URL } from '../services/constants';
 import { trimString } from '../services/helper';
 import NewsCard from '../components/NewsCard';
@@ -26,10 +24,18 @@ function Home({ navigation }) {
   useEffect(() => {
     axios
       .get(BASE_URL + '/top-headlines?country=us&sortBy=popularity&pageSize=1' + API_KEY)
-      .then((res) => setHotNews(res.data.articles));
+      .then((res) => setHotNews(res.data.articles))
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
     axios
       .get(BASE_URL + '/top-headlines?country=us&pageSize=20' + API_KEY)
-      .then((res) => setNews(res.data.articles));
+      .then((res) => setNews(res.data.articles))
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      });
   }, []);
 
   return (
@@ -93,7 +99,6 @@ function Home({ navigation }) {
             </View>
           </ImageBackground>
         ))}
-
       </View>
       <View
         style={{
@@ -105,10 +110,7 @@ function Home({ navigation }) {
           alignItems: 'center',
         }}
       >
-        <ScrollView
-          showsHorizontalScrollIndicator={false}
-          horizontal={true}
-        >
+        <ScrollView showsHorizontalScrollIndicator={false} horizontal={true}>
           {TAGS.map((item, index) => (
             <View key={index} style={item.selected ? styles.tag_selected : styles.tag}>
               <Text style={item.selected ? styles.text : styles.text_tag}>{item.title}</Text>
@@ -117,16 +119,12 @@ function Home({ navigation }) {
         </ScrollView>
       </View>
 
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView showsVerticalScrollIndicator={false}>
         {news.map((item, index) => {
-          return <NewsCard key={index} item={item} />;
+          return <NewsCard key={index} item={item} navigation={navigation} />;
         })}
       </ScrollView>
-
-    </View >
+    </View>
   );
 }
 

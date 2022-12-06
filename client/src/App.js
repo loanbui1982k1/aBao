@@ -14,6 +14,7 @@ import Login from './screens/Login';
 import Signup from './screens/Signup';
 import Profile from './screens/Profile';
 import Setting from './screens/Setting';
+import Detail from './screens/Detail';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -94,9 +95,9 @@ const toastConfig = {
   ),
 };
 
-const User = () => {
+const UserStack = () => {
   return (
-    <Stack.Navigator initialRouteName="Login">
+    <Stack.Navigator initialRouteName="Profile">
       <Stack.Screen
         name="Login"
         component={Login}
@@ -122,6 +123,48 @@ const User = () => {
   );
 };
 
+const HomeStack = () => {
+  return (
+    <Stack.Navigator initialRouteName="Home">
+      <Stack.Screen
+        name="Home"
+        component={Home}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Detail"
+        component={Detail}
+        options={{
+          headerShown: false,
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const FavoriteStack = () => {
+  return (
+    <Stack.Navigator initialRouteName="Favorite">
+      <Stack.Screen
+        name="Favorite"
+        component={Favorite}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Detail"
+        component={Detail}
+        options={{
+          headerShown: false,
+        }}
+      />
+    </Stack.Navigator>
+  );
+};
+
 const App = () => {
   return (
     <NavigationContainer>
@@ -133,8 +176,8 @@ const App = () => {
         }}
       >
         <Tab.Screen
-          name="Home"
-          component={Home}
+          name="HomeStack"
+          component={HomeStack}
           options={{
             tabBarLabel: 'Trang chủ',
             tabBarIcon: ({ color, size }) => (
@@ -144,8 +187,8 @@ const App = () => {
         />
 
         <Tab.Screen
-          name="Favorite"
-          component={Favorite}
+          name="FavoriteStack"
+          component={FavoriteStack}
           options={{
             tabBarLabel: 'Yêu thích',
             tabBarIcon: ({ color, size }) => (
@@ -154,8 +197,8 @@ const App = () => {
           }}
         />
         <Tab.Screen
-          name="User"
-          component={User}
+          name="UserStack"
+          component={UserStack}
           options={{
             tabBarLabel: 'Cá nhân',
             tabBarIcon: ({ color, size }) => (
