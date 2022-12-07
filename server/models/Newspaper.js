@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => {
             idNewspaper: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                autoIncrement: true,
                 primaryKey: true,
             },
             title: {

@@ -29,10 +29,10 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   textError: {
-    color: '#B21F28',
-    fontSize: 18,
+    color: '#FF3A44',
+    fontSize: 16,
     fontWeight: '500',
-    marginLeft: 40,
+    marginLeft: '20%',
     marginTop: 15
   },
   row: {
@@ -52,14 +52,9 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontSize: 18
   },
-  // inputError: {
-  //   borderBottomWidth: 2,
-  //   borderBottomColor: 'red',
-  //   borderRightWidth: 2,
-  //   borderRightColor: 'red',
-  //   borderTopWidth: 2,
-  //   borderTopColor: 'red',
-  // },
+  inputError: {
+    borderBottomColor: 'red'
+  },
   icon: {
     marginTop: 10,
     marginRight: 20,

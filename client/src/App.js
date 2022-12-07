@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -14,6 +14,9 @@ import Login from './screens/Login';
 import Signup from './screens/Signup';
 import Profile from './screens/Profile';
 import Setting from './screens/Setting';
+import { Store } from './redux/store';
+import { Provider } from 'react-redux';
+import Splash from './screens/Splash';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -94,9 +97,18 @@ const toastConfig = {
   ),
 };
 
+
+
 const User = () => {
   return (
-    <Stack.Navigator initialRouteName="Login">
+    <Stack.Navigator initialRouteName="Splash">
+      <Stack.Screen
+        name="Splash"
+        component={Splash}
+        options={{
+          headerShown: false,
+        }}
+      />
       <Stack.Screen
         name="Login"
         component={Login}
@@ -124,58 +136,60 @@ const User = () => {
 
 const App = () => {
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        initialRouteName="Home"
-        screenOptions={{
-          tabBarActiveTintColor: '#e91e63',
-          headerShown: false,
-        }}
-      >
-        <Tab.Screen
-          name="Home"
-          component={Home}
-          options={{
-            tabBarLabel: 'Trang chủ',
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="home-outline" color={color} size={size} />
-            ),
+    <Provider store={Store}>
+      <NavigationContainer>
+        <Tab.Navigator
+          initialRouteName="Home"
+          screenOptions={{
+            tabBarActiveTintColor: '#e91e63',
+            headerShown: false,
           }}
-        />
+        >
+          <Tab.Screen
+            name="Home"
+            component={Home}
+            options={{
+              tabBarLabel: 'Trang chủ',
+              tabBarIcon: ({ color, size }) => (
+                <MaterialCommunityIcons name="home-outline" color={color} size={size} />
+              ),
+            }}
+          />
 
-        <Tab.Screen
-          name="Favorite"
-          component={Favorite}
-          options={{
-            tabBarLabel: 'Yêu thích',
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="heart-multiple-outline" color={color} size={size} />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="User"
-          component={User}
-          options={{
-            tabBarLabel: 'Cá nhân',
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="emoticon-outline" color={color} size={size} />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Setting"
-          component={Setting}
-          options={{
-            tabBarLabel: 'Cài đặt',
-            tabBarIcon: ({ color, size }) => (
-              <MaterialCommunityIcons name="cog-outline" color={color} size={size} />
-            ),
-          }}
-        />
-      </Tab.Navigator>
-      <Toast config={toastConfig} />
-    </NavigationContainer>
+          <Tab.Screen
+            name="Favorite"
+            component={Favorite}
+            options={{
+              tabBarLabel: 'Yêu thích',
+              tabBarIcon: ({ color, size }) => (
+                <MaterialCommunityIcons name="heart-multiple-outline" color={color} size={size} />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="User"
+            component={User}
+            options={{
+              tabBarLabel: 'Cá nhân',
+              tabBarIcon: ({ color, size }) => (
+                <MaterialCommunityIcons name="emoticon-outline" color={color} size={size} />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Setting"
+            component={Setting}
+            options={{
+              tabBarLabel: 'Cài đặt',
+              tabBarIcon: ({ color, size }) => (
+                <MaterialCommunityIcons name="cog-outline" color={color} size={size} />
+              ),
+            }}
+          />
+        </Tab.Navigator>
+        <Toast config={toastConfig} />
+      </NavigationContainer>
+    </Provider>
   );
 };
 
