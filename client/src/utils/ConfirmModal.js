@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Modal, Pressable, TouchableWithoutFeedback } from 'react-native';
 
-const Modal = (props) => {
+const ConfirmModal = (props) => {
   const [showConfirmModal, setShowConfirmModal] = useState(props.showModal);
 
   return (
@@ -20,7 +20,7 @@ const Modal = (props) => {
             </View>
 
             <View style={styles.confirmBody}>
-              <Text style = {{color: "#000000"}}>{props.message}</Text>
+              <Text style={{ color: "#000000" }}>{props.message}</Text>
             </View>
 
             <View style={styles.buttonContainer}>
@@ -112,4 +112,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Modal;
+export default ConfirmModal;

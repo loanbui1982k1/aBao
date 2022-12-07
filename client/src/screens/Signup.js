@@ -53,7 +53,7 @@ function Signup({ navigation }) {
         } else if (value.length < 6) {
             setErrorPass('Mật khẩu quá ngắn(tối thiểu 6 kí tự)');
         } else if (value.length > 20) {
-            setErrorName('Mật khẩu quá dài');
+            setErrorPass('Mật khẩu quá dài');
         } else {
             setErrorPass('');
             return true;
@@ -86,7 +86,6 @@ function Signup({ navigation }) {
                     password,
                 })
                 .then((res) => {
-                    console.log(res.data);
                     if (res.data.error) {
                         Toast.show({
                             type: 'errorToast',
@@ -109,11 +108,11 @@ function Signup({ navigation }) {
         <View style={styles.view}>
             <ScrollView>
                 <View style={styles.header}>
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                         style={styles.back}
                     >
                         <Ionicons name="chevron-back" size={25} color="black" />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     <Text style={styles.textHeader}>Đăng ký</Text>
                 </View>
                 <Image style={styles.image} source={require('../../assets/logo.png')} resizeMode='contain'></Image>
@@ -205,7 +204,8 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
         color: '#FF3A44',
-        marginLeft: '23%',
+        marginLeft: 'auto',
+        marginRight: 'auto',
         fontStyle: "italic"
     },
     image: {

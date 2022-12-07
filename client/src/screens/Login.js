@@ -95,11 +95,11 @@ function Login({ navigation }) {
         <View style={styles.view}>
             <ScrollView>
                 <View style={styles.header}>
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                         style={styles.back}
                     >
                         <Ionicons name="chevron-back" size={25} color="black" />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     <Text style={styles.textHeader}>Đăng nhập</Text>
                 </View>
                 <Image style={styles.image} source={require('../../assets/logo.png')} resizeMode='contain'></Image>
@@ -172,7 +172,8 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
         color: '#FF3A44',
-        marginLeft: '23%',
+        marginLeft: 'auto',
+        marginRight: 'auto',
         fontStyle: "italic"
     },
     image: {

@@ -11,6 +11,7 @@ const Input = (props) => {
           <MaterialCommunityIcons name={props.icon} size={25} color={'#FF3A44'} />
         </View>
         <TextInput
+          editable={props.editable === false ? false : true}
           value={props.value}
           placeholder={props.placeholder}
           placeholderTextColor="#7E7E7E"
@@ -25,9 +26,7 @@ const Input = (props) => {
 };
 
 const styles = StyleSheet.create({
-  view: {
-    marginBottom: 5,
-  },
+
   textError: {
     color: '#FF3A44',
     fontSize: 16,

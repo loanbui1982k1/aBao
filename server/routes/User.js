@@ -54,19 +54,19 @@ router.get('/', async (req, res) => {
 );
 
 router.post('/changePass', async (req, res) => {
-  const { username, password, newPassword } = req.body;
-  const user = await User.findByPk(username);
+  const { idUser, passCurrent, passNew } = req.body;
+  const user = await User.findByPk(idUser);
   if (user) {
-    bcrypt.compare(password, user.password).then((match) => {
+    bcrypt.compare(passCurrent, user.password).then((match) => {
       if (!match) res.json({ error: 'Mật khẩu không chính xác' });
       else {
-        bcrypt.hash(newPassword, 10).then((hash) => {
+        bcrypt.hash(passNew, 10).then((hash) => {
           User.update(
             {
               password: hash,
             },
             {
-              where: { username: username },
+              where: { idUser: idUser },
             }
           );
         });
@@ -93,6 +93,7 @@ router.post('/update', async (req, res) => {
     updateQuery['profile_photo_path'] = profilePhotoPath;
   }
   User.update(updateQuery, { where: { idUser: idUser } });
+  res.json('SUCCESS');
 });
 
 
