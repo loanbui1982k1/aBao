@@ -1,8 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, ImageBackground, Pressable } from 'react-native';
+import { ThemeContext } from '../App';
 import { convertApiDate, trimString } from '../services/helper';
 
 function NewsCard({ item, navigation }) {
+  const { theme } = React.useContext(ThemeContext);
   return (
     <Pressable onPress={() => navigation.push('Detail', { item: item })}>
       <ImageBackground
@@ -18,7 +20,15 @@ function NewsCard({ item, navigation }) {
           borderRadius: 15,
         }}
       >
-        <Text style={styles.news_title}>{trimString(item.title, 200)}</Text>
+        <Text
+          style={{
+            ...styles.news_title,
+            color: theme.selectedTextColor,
+            backgroundColor: theme.selectedBgColor + '80',
+          }}
+        >
+          {trimString(item.title, 200)}
+        </Text>
         <View
           style={{
             flexDirection: 'row',
@@ -26,8 +36,24 @@ function NewsCard({ item, navigation }) {
             paddingTop: 30,
           }}
         >
-          <Text style={styles.text_author}>{trimString(item.author, 30)}</Text>
-          <Text style={styles.text_author}>{convertApiDate(item.publishedAt || '')}</Text>
+          <Text
+            style={{
+              ...styles.text_author,
+              color: theme.selectedTextColor,
+              backgroundColor: theme.selectedBgColor + '80',
+            }}
+          >
+            {trimString(item.author, 30)}
+          </Text>
+          <Text
+            style={{
+              ...styles.text_author,
+              color: theme.selectedTextColor,
+              backgroundColor: theme.selectedBgColor + '80',
+            }}
+          >
+            {convertApiDate(item.publishedAt || '')}
+          </Text>
         </View>
       </ImageBackground>
     </Pressable>
@@ -46,12 +72,14 @@ const styles = StyleSheet.create({
   },
   news_title: {
     fontSize: 14,
-    color: '#fff',
     fontStyle: 'italic',
+    padding: 10,
+    borderRadius: 10,
   },
   text_author: {
-    color: '#fff',
     fontSize: 14,
+    paddingHorizontal: 10,
+    borderRadius: 4,
   },
 });
 

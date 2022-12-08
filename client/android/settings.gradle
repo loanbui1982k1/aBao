@@ -1,4 +1,6 @@
 rootProject.name = 'client'
+include ':@react-native-picker_picker'
+project(':@react-native-picker_picker').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-picker/picker/android')
 include ':react-native-push-notification'
 project(':react-native-push-notification').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-push-notification/android')
 include ':react-native-vector-icons'
@@ -7,6 +9,8 @@ apply from: file("../node_modules/@react-native-community/cli-platform-android/n
 include ':app'
 include ':react-native-config'
 includeBuild('../node_modules/react-native-gradle-plugin')
+include ':react-native-color-panel'
+project(':react-native-color-panel').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-color-panel/android')
 
 if (settings.hasProperty("newArchEnabled") && settings.newArchEnabled == "true") {
     include(":ReactAndroid")

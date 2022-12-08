@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.picker.RNCPickerPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactInstanceManager;
@@ -15,6 +16,7 @@ import com.client.newarchitecture.MainApplicationReactNativeHost;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
+import com.ato.reactlibrary.RNColorPanelPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -32,6 +34,7 @@ public class MainApplication extends Application implements ReactApplication {
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
           // packages.add(new ReactNativeConfigPackage());
+          packages.add(new RNColorPanelPackage());
           return packages;
         }
 
