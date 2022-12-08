@@ -53,7 +53,7 @@ router.get('/', async (req, res) => {
 }
 );
 
-router.post('/changePass', async (req, res) => {
+router.patch('/changePass', async (req, res) => {
   const { idUser, passCurrent, passNew } = req.body;
   const user = await User.findByPk(idUser);
   if (user) {
@@ -78,7 +78,7 @@ router.post('/changePass', async (req, res) => {
   }
 });
 
-router.post('/update', async (req, res) => {
+router.patch('/update', async (req, res) => {
   const { username, password, profilePhotoPath, idUser } = req.body;
   const updateQuery = {};
   if (password) {

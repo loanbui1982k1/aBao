@@ -142,7 +142,7 @@ function Profile({ navigation }) {
         if (valid1 && valid2 && valid3 && valid4) {
             if (name !== username) {
                 userInfo['username'] = name;
-                axios.post(`${API_URL}/users/update`, userInfo).then((res) => {
+                axios.patch(`${API_URL}/users/update`, userInfo).then((res) => {
                     dispatch(setUsernameRedux(name));
                     AsyncStorage.mergeItem(
                         'user',
@@ -153,7 +153,7 @@ function Profile({ navigation }) {
                 });
             }
             if (passNew !== '') {
-                axios.post(`${API_URL}/users/changePass`, { idUser, passCurrent, passNew }).then((res) => {
+                axios.patch(`${API_URL}/users/changePass`, { idUser, passCurrent, passNew }).then((res) => {
                     if (res.data.error) {
                         Toast.show({
                             type: 'errorToast',
@@ -183,9 +183,9 @@ function Profile({ navigation }) {
                         .ref(username)
                         .getDownloadURL()
                         .then((url) => {
-                            // // POST data to server
+                            // // patch data to server
                             userInfo['profilePhotoPath'] = url;
-                            axios.post(`${API_URL}/users/update`, userInfo).then((res) => {
+                            axios.patch(`${API_URL}/users/update`, userInfo).then((res) => {
                                 dispatch(setProfilePhotoPathRedux(url));
                                 AsyncStorage.mergeItem(
                                     'user',
