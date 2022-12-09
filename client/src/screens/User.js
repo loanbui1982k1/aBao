@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import Text from '../components/Text';
 
 function User({ navigation }) {
   return (
@@ -17,11 +18,9 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   text: {
-    fontSize: 20,
     width: '80%',
     textAlign: 'center',
     fontWeight: 'bold',
-    color: 'black',
     marginBottom: 20,
   },
 });

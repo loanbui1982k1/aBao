@@ -181,6 +181,8 @@ export const THEME = {
   selectedBgColor: '#FFFFFF',
   selectedTextColor: '#000000',
   selectedActiveColor: '#BB2649',
+  selectedButtonColor: '#BB2649',
+  selectedButtonTextColor: '#FFFFFF',
 };
 
 const App = () => {

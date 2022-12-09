@@ -9,18 +9,22 @@ const defaultProfilePath =
 
 router.post('/', async (req, res) => {
   const { email, username, password } = req.body;
-  const user = await User.findOne({ where: { email: email } });
-  if (user) res.json({ error: 'Email đã tồn tại' });
-  else {
-    bcrypt.hash(password, 10).then(async (hash) => {
-      User.create({
-        email: email,
-        username: username,
-        password: hash,
-        profile_photo_path: defaultProfilePath,
+  try {
+    const user = await User.findOne({ where: { email: email } });
+    if (user) res.json({ error: 'Email đã tồn tại' });
+    else {
+      bcrypt.hash(password, 10).then(async (hash) => {
+        User.create({
+          email: email,
+          username: username,
+          password: hash,
+          profile_photo_path: defaultProfilePath,
+        });
       });
-    });
-    res.json('SUCCESS');
+      res.json('SUCCESS');
+    }
+  } catch (err) {
+    console.log(err);
   }
 });
 

@@ -51,17 +51,33 @@ export default function CustomText({ children, style, ...props }) {
   );
 }
 
-export function Header({ children, style, ...props }) {
-  const { font } = React.useContext(ThemeContext);
+export function ButtonText({ children, style, ...props }) {
+  const { theme } = React.useContext(ThemeContext);
+  return (
+    <CustomText
+      {...props}
+      style={{
+        color: theme.selectedButtonTextColor,
+        ...style,
+      }}
+    >
+      {children}
+    </CustomText>
+  );
+}
+
+export function HeaderText({ children, style, ...props }) {
+  const { font, theme } = React.useContext(ThemeContext);
   return (
     <CustomText
       {...props}
       style={[
         {
-          fontSize: font.fontSize + 10,
+          fontSize: font.fontSize + 12,
           lineHeight: font.lineHeight + 14,
           fontWeight: 'bold',
           fontStyle: 'italic',
+          color: theme.selectedActiveColor,
         },
         style,
       ]}
@@ -71,7 +87,7 @@ export function Header({ children, style, ...props }) {
   );
 }
 
-export function SectionHeader({ children, style, ...props }) {
+export function SectionHeaderText({ children, style, ...props }) {
   const { font } = React.useContext(ThemeContext);
   return (
     <CustomText

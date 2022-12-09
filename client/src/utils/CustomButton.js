@@ -1,20 +1,46 @@
 import React from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
+import { TouchableOpacity, StyleSheet } from 'react-native';
+import { ThemeContext } from '../App';
+import Text, { ButtonText } from '../components/Text';
 
-// props.pos = 'left' hoặc 'right' để chọn vị trí cho icon
-
-export default function CustomButton(props) {
+export default function CustomButton({ children, style, ...props }) {
+  const { theme } = React.useContext(ThemeContext);
   return (
-    <TouchableOpacity style={[styles.button, props.buttonStyles]} onPress={props.onPressFunc}>
+    <TouchableOpacity {...props} style={{ backgroundColor: theme.selectedButtonColor, ...style }}>
+      {children}
+    </TouchableOpacity>
+  );
+}
+
+// props.pos = 'left' or 'right' to pick position of icon
+
+export function IconButton(props) {
+  const { theme } = React.useContext(ThemeContext);
+  return (
+    <TouchableOpacity
+      style={[styles.button, { backgroundColor: theme.selectedButtonColor, ...props.buttonStyles }]}
+      onPress={props.onPress}
+    >
       {props.pos === 'left' && (
-        <MaterialCommunityIcons name={props.iconName} size={props.iconSize} color={props.iconColor} />
+        <MaterialCommunityIcons
+          name={props.iconName}
+          size={props.iconSize}
+          color={props.iconColor || theme.selectedButtonTextColor}
+        />
       )}
-      <Text style={[styles.text, props.textStyles]} numberOfLines={1}>
+      <ButtonText
+        style={{ ...styles.text, color: theme.selectedButtonTextColor, ...props.textStyles }}
+        numberOfLines={1}
+      >
         {props.text}
-      </Text>
+      </ButtonText>
       {props.pos === 'right' && (
-        <MaterialCommunityIcons name={props.iconName} size={props.iconSize} color={props.iconColor} />
+        <MaterialCommunityIcons
+          name={props.iconName}
+          size={props.iconSize}
+          color={props.iconColor || theme.selectedButtonTextColor}
+        />
       )}
     </TouchableOpacity>
   );
@@ -26,16 +52,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    minWidth: '50%',
-    maxWidth: '100%'
   },
 
   text: {
-    fontSize: 20,
     textAlign: 'center',
     fontWeight: 'bold',
     marginHorizontal: '10%',
     marginVertical: '6%',
-    fontFamily: 'sans-serif'
   },
 });

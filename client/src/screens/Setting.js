@@ -4,10 +4,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import RNColorPanel from 'react-native-color-panel';
 import { ThemeContext } from '../App';
-import Text, { FONT_FAMILY, Header, SectionHeader } from '../components/Text';
+import Text, { FONT_FAMILY, HeaderText, SectionHeaderText, ButtonText } from '../components/Text';
 import { Picker } from '@react-native-picker/picker';
 import TextInput from '../components/TextInput';
-import { PRIMARY_COLOR } from '../constant';
+import CustomButton from '../utils/CustomButton';
 
 const { width, height } = Dimensions.get('window');
 
@@ -27,12 +27,9 @@ function ColorModal(props) {
             brightnessLowerLimit={0}
             onColorChange={props.modalConfig.firstRender ? props.setFirstRender : props.setState}
           />
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: props.theme.selectedActiveColor + '50' }]}
-            onPress={props.setModalConfig}
-          >
-            <Text style={styles.textStyle}>Đóng</Text>
-          </TouchableOpacity>
+          <CustomButton style={styles.button} onPress={props.setModalConfig}>
+            <ButtonText>Đóng</ButtonText>
+          </CustomButton>
         </View>
       </View>
     </Modal>
@@ -61,10 +58,10 @@ function Setting({ navigation }) {
           <TouchableOpacity style={styles.back}>
             <Ionicons name="chevron-back" size={25} color={theme.selectedTextColor} />
           </TouchableOpacity>
-          <Header style={styles.textHeader}>Cài đặt</Header>
+          <HeaderText style={styles.textHeader}>Cài đặt</HeaderText>
         </View>
         <View style={styles.section}>
-          <SectionHeader style={styles.title}>Giao diện</SectionHeader>
+          <SectionHeaderText style={styles.title}>Giao diện</SectionHeaderText>
 
           <View style={{ ...styles.row, paddingVertical: 8 }}>
             <Text style={styles.text}>Màu nền</Text>
@@ -131,6 +128,51 @@ function Setting({ navigation }) {
             </TouchableOpacity>
           </View>
           <View style={{ ...styles.line, backgroundColor: theme.selectedTextColor }}></View>
+
+          <View style={{ ...styles.row, paddingVertical: 8 }}>
+            <Text style={styles.text}>Màu nền nút</Text>
+            <TouchableOpacity
+              onPress={() =>
+                setModalConfig({
+                  visible: !modalConfig.visible,
+                  type: Object.keys(theme)[3],
+                  firstRender: true,
+                })
+              }
+            >
+              <View
+                style={{
+                  ...styles.background,
+                  backgroundColor: theme.selectedButtonColor,
+                  borderColor: theme.selectedButtonTextColor,
+                }}
+              ></View>
+            </TouchableOpacity>
+          </View>
+          <View style={{ ...styles.line, backgroundColor: theme.selectedTextColor }}></View>
+
+          <View style={{ ...styles.row, paddingVertical: 8 }}>
+            <Text style={styles.text}>Màu chữ nút</Text>
+            <TouchableOpacity
+              onPress={() =>
+                setModalConfig({
+                  visible: !modalConfig.visible,
+                  type: Object.keys(theme)[4],
+                  firstRender: true,
+                })
+              }
+            >
+              <View
+                style={{
+                  ...styles.background,
+                  backgroundColor: theme.selectedButtonTextColor,
+                  borderColor: theme.selectedButtonColor,
+                }}
+              ></View>
+            </TouchableOpacity>
+          </View>
+          <View style={{ ...styles.line, backgroundColor: theme.selectedTextColor }}></View>
+
           <View style={styles.row}>
             <Text>Phông chữ</Text>
             <Picker
@@ -154,6 +196,7 @@ function Setting({ navigation }) {
             </Picker>
           </View>
           <View style={{ ...styles.line, backgroundColor: theme.selectedTextColor }}></View>
+
           <View style={styles.row}>
             <Text style={styles.text}>Cỡ chữ</Text>
             <View style={styles.rowView}>
@@ -177,6 +220,7 @@ function Setting({ navigation }) {
             </View>
           </View>
           <View style={{ ...styles.line, backgroundColor: theme.selectedTextColor }}></View>
+
           <View style={styles.row}>
             <Text style={styles.text}>Độ cao dòng</Text>
             <View style={styles.rowView}>
@@ -200,6 +244,7 @@ function Setting({ navigation }) {
             </View>
           </View>
           <View style={{ ...styles.line, backgroundColor: theme.selectedTextColor }}></View>
+
           <View style={styles.row}>
             <Text style={styles.text}>Giãn cách dòng</Text>
             <View style={styles.rowView}>
@@ -225,7 +270,7 @@ function Setting({ navigation }) {
           <View style={{ ...styles.line, backgroundColor: theme.selectedTextColor }}></View>
         </View>
         <View style={styles.section}>
-          <SectionHeader style={styles.title}>Phiên đăng nhập</SectionHeader>
+          <SectionHeaderText style={styles.title}>Phiên đăng nhập</SectionHeaderText>
           <View style={styles.row}>
             <Text style={styles.text}>Đăng xuất</Text>
             <MaterialCommunityIcons color={theme.selectedTextColor} name="logout" size={28} />
@@ -278,11 +323,12 @@ const styles = StyleSheet.create({
   header: {
     flex: 1,
     flexDirection: 'row',
+    alignItems: 'center',
     marginTop: '3%',
     width: '100%',
   },
   textHeader: {
-    marginLeft: '28%',
+    marginLeft: '36%',
   },
   section: {
     flexDirection: 'column',
