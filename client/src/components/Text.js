@@ -22,9 +22,9 @@ export const disableStyles = {
 };
 
 export const FONT_FAMILY = ['Roboto', 'RobotoMono', 'NotoSerif', 'PlayfairDisplay'];
-export const FONT_CONFIG = { fontSize: 14, lineHeight: 20, letterSpacing: 0 };
+export const FONT_CONFIG = { fontSize: 14, lineHeight: 14, letterSpacing: 0 };
 
-export default function ({ children, style, ...props }) {
+export default function CustomText({ children, style, ...props }) {
   const { fontWeight = '400', fontStyle } = StyleSheet.flatten(style || {});
   const { theme, font } = React.useContext(ThemeContext);
   const retFont = `${font.fontFamily}-${FONT_WEIGHT[fontWeight]}${
@@ -48,5 +48,44 @@ export default function ({ children, style, ...props }) {
     >
       {children}
     </Text>
+  );
+}
+
+export function Header({ children, style, ...props }) {
+  const { font } = React.useContext(ThemeContext);
+  return (
+    <CustomText
+      {...props}
+      style={[
+        {
+          fontSize: font.fontSize + 10,
+          lineHeight: font.lineHeight + 14,
+          fontWeight: 'bold',
+          fontStyle: 'italic',
+        },
+        style,
+      ]}
+    >
+      {children}
+    </CustomText>
+  );
+}
+
+export function SectionHeader({ children, style, ...props }) {
+  const { font } = React.useContext(ThemeContext);
+  return (
+    <CustomText
+      {...props}
+      style={[
+        {
+          fontSize: font.fontSize + 4,
+          lineHeight: font.lineHeight + 8,
+          fontWeight: 'bold',
+        },
+        style,
+      ]}
+    >
+      {children}
+    </CustomText>
   );
 }

@@ -4,17 +4,14 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import RNColorPanel from 'react-native-color-panel';
 import { ThemeContext } from '../App';
-import Text, { FONT_FAMILY } from '../components/Text';
+import Text, { FONT_FAMILY, Header, SectionHeader } from '../components/Text';
 import { Picker } from '@react-native-picker/picker';
 import TextInput from '../components/TextInput';
+import { PRIMARY_COLOR } from '../constant';
 
 const { width, height } = Dimensions.get('window');
 
 function ColorModal(props) {
-  useEffect(() => {
-    props.setState(props.selectedColor);
-  }, []);
-
   return (
     <Modal
       animationType="slide"
@@ -23,7 +20,7 @@ function ColorModal(props) {
       onRequestClose={props.setModalConfig}
     >
       <View style={styles.centeredView}>
-        <View style={styles.modalView}>
+        <View style={{ ...styles.modalView, backgroundColor: props.theme.selectedBgColor }}>
           <RNColorPanel
             style={styles.panel}
             color={props.selectedColor}
@@ -31,7 +28,7 @@ function ColorModal(props) {
             onColorChange={props.modalConfig.firstRender ? props.setFirstRender : props.setState}
           />
           <TouchableOpacity
-            style={[styles.button, { backgroundColor: props.selectedBgColor }]}
+            style={[styles.button, { backgroundColor: props.theme.selectedActiveColor + '50' }]}
             onPress={props.setModalConfig}
           >
             <Text style={styles.textStyle}>Đóng</Text>
@@ -57,25 +54,19 @@ function Setting({ navigation }) {
           setTheme({ ...theme, [modalConfig.type]: color });
         }}
         selectedBgColor={theme.selectedBgColor}
+        theme={theme}
       />
       <ScrollView style={{ width: '85%' }}>
         <View style={styles.header}>
           <TouchableOpacity style={styles.back}>
             <Ionicons name="chevron-back" size={25} color={theme.selectedTextColor} />
           </TouchableOpacity>
-          <Text style={styles.textHeader}>Cài đặt</Text>
+          <Header style={styles.textHeader}>Cài đặt</Header>
         </View>
         <View style={styles.section}>
-          <Text
-            style={{
-              ...styles.title,
-              fontSize: font.fontSize + 4,
-              lineHeight: font.lineHeight + 4,
-            }}
-          >
-            Giao diện
-          </Text>
-          <View style={styles.row}>
+          <SectionHeader style={styles.title}>Giao diện</SectionHeader>
+
+          <View style={{ ...styles.row, paddingVertical: 8 }}>
             <Text style={styles.text}>Màu nền</Text>
             <TouchableOpacity
               onPress={() =>
@@ -86,13 +77,19 @@ function Setting({ navigation }) {
                 })
               }
             >
-              <View style={{ ...styles.background, backgroundColor: theme.selectedBgColor }}></View>
+              <View
+                style={{
+                  ...styles.background,
+                  backgroundColor: theme.selectedBgColor,
+                  borderColor: theme.selectedActiveColor,
+                }}
+              ></View>
             </TouchableOpacity>
           </View>
           <View style={{ ...styles.line, backgroundColor: theme.selectedTextColor }}></View>
-          <View style={styles.row}>
-            <Text style={styles.text}>Màu chữ</Text>
 
+          <View style={{ ...styles.row, paddingVertical: 8 }}>
+            <Text style={styles.text}>Màu chữ</Text>
             <TouchableOpacity
               onPress={() =>
                 setModalConfig({
@@ -103,13 +100,18 @@ function Setting({ navigation }) {
               }
             >
               <View
-                style={{ ...styles.background, backgroundColor: theme.selectedTextColor }}
+                style={{
+                  ...styles.background,
+                  backgroundColor: theme.selectedTextColor,
+                  borderColor: theme.selectedActiveColor,
+                }}
               ></View>
             </TouchableOpacity>
           </View>
           <View style={{ ...styles.line, backgroundColor: theme.selectedTextColor }}></View>
-          <View style={styles.row}>
-            <Text style={styles.text}>Màu Đánh dấu</Text>
+
+          <View style={{ ...styles.row, paddingVertical: 8 }}>
+            <Text style={styles.text}>Màu đánh dấu</Text>
             <TouchableOpacity
               onPress={() =>
                 setModalConfig({
@@ -120,7 +122,11 @@ function Setting({ navigation }) {
               }
             >
               <View
-                style={{ ...styles.background, backgroundColor: theme.selectedActiveColor }}
+                style={{
+                  ...styles.background,
+                  backgroundColor: theme.selectedActiveColor,
+                  borderColor: theme.selectedTextColor,
+                }}
               ></View>
             </TouchableOpacity>
           </View>
@@ -154,7 +160,7 @@ function Setting({ navigation }) {
               <TextInput
                 style={{ textAlign: 'right' }}
                 onChangeText={(text) =>
-                  text && text < 40
+                  text && text <= 40
                     ? setFont({ ...font, fontSize: Number.parseInt(text) })
                     : setFont({ ...font, fontSize: null })
                 }
@@ -164,7 +170,7 @@ function Setting({ navigation }) {
                     : null
                 }
                 value={font?.fontSize?.toString()}
-                placeholder="Nhập cỡ chữ, tối đa 40px"
+                placeholder="Tối đa 40  "
                 keyboardType="numeric"
               />
               <Text>px</Text>
@@ -177,17 +183,17 @@ function Setting({ navigation }) {
               <TextInput
                 style={{ textAlign: 'right' }}
                 onChangeText={(text) =>
-                  text && text < 50
+                  text && text <= 50
                     ? setFont({ ...font, lineHeight: Number.parseInt(text) })
                     : setFont({ ...font, lineHeight: null })
                 }
                 onBlur={() =>
                   !font.lineHeight || 0 === font.lineHeight || font.lineHeight > 50
-                    ? setFont({ ...font, lineHeight: 20 })
+                    ? setFont({ ...font, lineHeight: 14 })
                     : null
                 }
                 value={font?.lineHeight?.toString()}
-                placeholder="Nhập Độ cao dòng, tối đa 50px"
+                placeholder="Tối đa 50  "
                 keyboardType="numeric"
               />
               <Text>px</Text>
@@ -205,12 +211,12 @@ function Setting({ navigation }) {
                     : setFont({ ...font, letterSpacing: null })
                 }
                 onBlur={() =>
-                  !font.letterSpacing || font.fontSize > 10
+                  !font.letterSpacing || font.letterSpacing > 10
                     ? setFont({ ...font, letterSpacing: 0 })
                     : null
                 }
                 value={font?.letterSpacing?.toString()}
-                placeholder="Nhập Giãn cách dòng, tối đa 10"
+                placeholder="Tối đa 10  "
                 keyboardType="numeric"
               />
               <Text>px</Text>
@@ -219,36 +225,7 @@ function Setting({ navigation }) {
           <View style={{ ...styles.line, backgroundColor: theme.selectedTextColor }}></View>
         </View>
         <View style={styles.section}>
-          <Text
-            style={{
-              ...styles.title,
-              fontSize: font.fontSize + 4,
-              lineHeight: font.lineHeight + 4,
-            }}
-          >
-            Thông báo
-          </Text>
-          <View style={styles.row}>
-            <Text style={styles.text}>Thời gian</Text>
-            <Text style={styles.text}>19:00, 21:00</Text>
-          </View>
-          <View style={{ ...styles.line, backgroundColor: theme.selectedTextColor }}></View>
-          <View style={styles.row}>
-            <Text style={styles.text}>Âm thanh</Text>
-            <Text style={styles.text}>Beep beep</Text>
-          </View>
-          <View style={{ ...styles.line, backgroundColor: theme.selectedTextColor }}></View>
-        </View>
-        <View style={styles.section}>
-          <Text
-            style={{
-              ...styles.title,
-              fontSize: font.fontSize + 4,
-              lineHeight: font.lineHeight + 4,
-            }}
-          >
-            Phiên đăng nhập
-          </Text>
+          <SectionHeader style={styles.title}>Phiên đăng nhập</SectionHeader>
           <View style={styles.row}>
             <Text style={styles.text}>Đăng xuất</Text>
             <MaterialCommunityIcons color={theme.selectedTextColor} name="logout" size={28} />
@@ -263,7 +240,6 @@ function Setting({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
     alignItems: 'center',
   },
   panel: {
@@ -279,7 +255,6 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    backgroundColor: 'white',
     borderRadius: 20,
     padding: 35,
     alignItems: 'center',
@@ -288,9 +263,9 @@ const styles = StyleSheet.create({
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.25,
+    shadowOpacity: 1,
     shadowRadius: 4,
-    elevation: 5,
+    elevation: 10,
   },
   button: {
     borderRadius: 20,
@@ -302,17 +277,12 @@ const styles = StyleSheet.create({
   },
   header: {
     flex: 1,
-    height: '10%',
     flexDirection: 'row',
     marginTop: '3%',
     width: '100%',
   },
   textHeader: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#FF3A44',
     marginLeft: '28%',
-    fontStyle: 'italic',
   },
   section: {
     flexDirection: 'column',
@@ -320,8 +290,7 @@ const styles = StyleSheet.create({
     marginTop: '3%',
   },
   title: {
-    fontWeight: 'bold',
-    marginBottom: '5%',
+    marginVertical: '5%',
   },
   row: {
     flex: 1,
@@ -340,7 +309,6 @@ const styles = StyleSheet.create({
     width: 40,
     borderWidth: 1,
     borderRadius: 6,
-    borderColor: '#2E0505',
   },
   line: {
     width: '100%',
