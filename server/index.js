@@ -16,6 +16,12 @@ app.use('/', defaultRouter);
 app.use('/users', userRouter);
 app.use('/detail', detailRouter);
 
+const categoryRouter = require('./routes/Category');
+app.use('/category', categoryRouter);
+
+const newspaperRouter = require('./routes/Newspaper');
+app.use('/newspaper', newspaperRouter);
+
 db.sequelize.sync().then(() => {
   app.listen(3001, () => {
     console.log('Server running on port 3001');

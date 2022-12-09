@@ -11,6 +11,7 @@ const Input = (props) => {
           <MaterialCommunityIcons name={props.icon} size={25} color={'#FF3A44'} />
         </View>
         <TextInput
+          editable={props.editable === false ? false : true}
           value={props.value}
           placeholder={props.placeholder}
           placeholderTextColor="#7E7E7E"
@@ -25,14 +26,12 @@ const Input = (props) => {
 };
 
 const styles = StyleSheet.create({
-  view: {
-    marginBottom: 5,
-  },
+
   textError: {
-    color: '#B21F28',
-    fontSize: 18,
+    color: '#FF3A44',
+    fontSize: 16,
     fontWeight: '500',
-    marginLeft: 40,
+    marginLeft: '20%',
     marginTop: 15
   },
   row: {
@@ -52,14 +51,9 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontSize: 18
   },
-  // inputError: {
-  //   borderBottomWidth: 2,
-  //   borderBottomColor: 'red',
-  //   borderRightWidth: 2,
-  //   borderRightColor: 'red',
-  //   borderTopWidth: 2,
-  //   borderTopColor: 'red',
-  // },
+  inputError: {
+    borderBottomColor: 'red'
+  },
   icon: {
     marginTop: 10,
     marginRight: 20,

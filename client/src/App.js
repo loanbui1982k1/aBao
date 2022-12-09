@@ -16,6 +16,9 @@ import Profile from './screens/Profile';
 import Setting from './screens/Setting';
 import Detail from './screens/Detail';
 import { FONT_FAMILY, FONT_CONFIG } from './components/Text';
+import { Store } from './redux/store';
+import { Provider } from 'react-redux';
+import Splash from './screens/Splash';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -98,7 +101,14 @@ const toastConfig = {
 
 const UserStack = () => {
   return (
-    <Stack.Navigator initialRouteName="Profile">
+    <Stack.Navigator initialRouteName="Splash">
+      <Stack.Screen
+        name="Splash"
+        component={Splash}
+        options={{
+          headerShown: false,
+        }}
+      />
       <Stack.Screen
         name="Login"
         component={Login}
@@ -185,62 +195,68 @@ const App = () => {
         setFont: setFont,
       }}
     >
-      <View style={{ flex: 1, backgroundColor: theme.selectedBgColor }}>
-        <NavigationContainer>
-          <Tab.Navigator
-            initialRouteName="Home"
-            screenOptions={{
-              tabBarActiveTintColor: theme.selectedActiveColor,
-              headerShown: false,
-              tabBarInactiveBackgroundColor: theme.selectedBgColor,
-              tabBarActiveBackgroundColor: theme.selectedBgColor,
-            }}
-          >
-            <Tab.Screen
-              name="HomeStack"
-              component={HomeStack}
-              options={{
-                tabBarLabel: 'Trang chủ',
-                tabBarIcon: ({ color, size }) => (
-                  <MaterialCommunityIcons name="home-outline" color={color} size={size} />
-                ),
+      <Provider store={Store}>
+        <View style={{ flex: 1, backgroundColor: theme.selectedBgColor }}>
+          <NavigationContainer>
+            <Tab.Navigator
+              initialRouteName="Home"
+              screenOptions={{
+                tabBarActiveTintColor: theme.selectedActiveColor,
+                headerShown: false,
+                tabBarInactiveBackgroundColor: theme.selectedBgColor,
+                tabBarActiveBackgroundColor: theme.selectedBgColor,
               }}
-            />
+            >
+              <Tab.Screen
+                name="HomeStack"
+                component={HomeStack}
+                options={{
+                  tabBarLabel: 'Trang chủ',
+                  tabBarIcon: ({ color, size }) => (
+                    <MaterialCommunityIcons name="home-outline" color={color} size={size} />
+                  ),
+                }}
+              />
 
-            <Tab.Screen
-              name="FavoriteStack"
-              component={FavoriteStack}
-              options={{
-                tabBarLabel: 'Yêu thích',
-                tabBarIcon: ({ color, size }) => (
-                  <MaterialCommunityIcons name="heart-multiple-outline" color={color} size={size} />
-                ),
-              }}
-            />
-            <Tab.Screen
-              name="UserStack"
-              component={UserStack}
-              options={{
-                tabBarLabel: 'Cá nhân',
-                tabBarIcon: ({ color, size }) => (
-                  <MaterialCommunityIcons name="emoticon-outline" color={color} size={size} />
-                ),
-              }}
-            />
-            <Tab.Screen
-              name="Setting"
-              component={Setting}
-              options={{
-                tabBarLabel: 'Cài đặt',
-                tabBarIcon: ({ color, size }) => (
-                  <MaterialCommunityIcons name="cog-outline" color={color} size={size} />
-                ),
-              }}
-            />
-          </Tab.Navigator>
-          <Toast config={toastConfig} />
-        </NavigationContainer>
-      </View>
+              <Tab.Screen
+                name="FavoriteStack"
+                component={FavoriteStack}
+                options={{
+                  tabBarLabel: 'Yêu thích',
+                  tabBarIcon: ({ color, size }) => (
+                    <MaterialCommunityIcons
+                      name="heart-multiple-outline"
+                      color={color}
+                      size={size}
+                    />
+                  ),
+                }}
+              />
+              <Tab.Screen
+                name="UserStack"
+                component={UserStack}
+                options={{
+                  tabBarLabel: 'Cá nhân',
+                  tabBarIcon: ({ color, size }) => (
+                    <MaterialCommunityIcons name="emoticon-outline" color={color} size={size} />
+                  ),
+                }}
+              />
+              <Tab.Screen
+                name="Setting"
+                component={Setting}
+                options={{
+                  tabBarLabel: 'Cài đặt',
+                  tabBarIcon: ({ color, size }) => (
+                    <MaterialCommunityIcons name="cog-outline" color={color} size={size} />
+                  ),
+                }}
+              />
+            </Tab.Navigator>
+            <Toast config={toastConfig} />
+          </NavigationContainer>
+        </View>
+      </Provider>
     </ThemeContext.Provider>
   );
 };

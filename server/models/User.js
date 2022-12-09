@@ -21,10 +21,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      name: {
+      profile_photo_path: {
         type: DataTypes.STRING,
-        allowNull: false,
-      }
+        allowNull: true,
+      },
     },
     {
       timestamps: false,

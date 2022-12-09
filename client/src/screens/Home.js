@@ -2,9 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { View, TextInput, StyleSheet, Text, ImageBackground, ScrollView } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
+import { JSDOM } from 'jsdom';
+import { Readability } from '@mozilla/readability';
+import { useDispatch } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_KEY, BASE_URL } from '../services/constants';
 import { trimString } from '../services/helper';
 import NewsCard from '../components/NewsCard';
+import { setEmailRedux, setIdUserRedux, setProfilePhotoPathRedux, setUsernameRedux } from '../redux/actions';
+
 
 export const TAGS = [
   { title: 'Kinh tế', api: 'business', selected: true },
@@ -21,7 +27,18 @@ function Home({ navigation }) {
   const [hotNews, setHotNews] = useState([]);
   const [news, setNews] = useState([]);
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
+    AsyncStorage.getItem('user').then((user) => {
+      let userData = JSON.parse(user)
+      if (userData) {
+        dispatch(setEmailRedux(userData.email));
+        dispatch(setUsernameRedux(userData.username));
+        dispatch(setIdUserRedux(userData.idUser));
+        dispatch(setProfilePhotoPathRedux(userData.profilePhotoPath));
+      }
+    });
     axios
       .get(BASE_URL + '/top-headlines?country=us&sortBy=popularity&pageSize=1' + API_KEY)
       .then((res) => setHotNews(res.data.articles))

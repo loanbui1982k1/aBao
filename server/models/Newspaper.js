@@ -5,11 +5,16 @@ module.exports = (sequelize, DataTypes) => {
             idNewspaper: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                autoIncrement: true,
                 primaryKey: true,
             },
             title: {
                 type: DataTypes.STRING,
                 allowNull: false,
+            },
+            description: {
+                type: DataTypes.STRING,
+                allowNull: true,
             },
             image: {
                 type: DataTypes.STRING,
@@ -19,14 +24,21 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
-            idWriter: {
-                type: DataTypes.INTEGER,
+            writer: {
+                type: DataTypes.STRING,
                 allowNull: false,
             },
-            idCategory: {
-                type: DataTypes.INTEGER,
+            nameCategory: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            date: {
+                type: DataTypes.STRING,
                 allowNull: false,
             }
+        },
+        {
+            timestamps: false,
         }
     );
     return Newspaper;
