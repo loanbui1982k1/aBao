@@ -1,12 +1,18 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, TextInput, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { ThemeContext } from '../App';
 import NewsCard from '../components/NewsCard';
+import { HeaderText } from '../components/Text';
 import { API_KEY, BASE_URL } from '../services/constants';
 import { TAGS } from './Home';
+import Text from '../components/Text';
+import TextInput from '../components/TextInput';
+import LinearGradient from 'react-native-linear-gradient';
 
 function Favorite({ navigation }) {
+  const { theme, font } = React.useContext(ThemeContext);
   const [news, setNews] = useState([]);
 
   useEffect(() => {
@@ -16,34 +22,68 @@ function Favorite({ navigation }) {
   }, []);
 
   return (
-    <View>
-      <View style={styles.topTitle}>
-        <MaterialCommunityIcons name="chevron-left" color="#000" size={30} />
-        <Text style={styles.text_topTitle}>Yêu thích</Text>
-      </View>
+    <View style={{ ...styles.container, backgroundColor: theme.selectedBgColor }}>
       <View style={styles.header}>
-        <View style={styles.search_input}>
-          <TextInput style={styles.input} placeholder="Tìm kiếm" />
-          <MaterialCommunityIcons name="magnify" color="#818181" size={16} style={styles.icon} />
+        <HeaderText>Yêu thích</HeaderText>
+      </View>
+      <View
+        style={{
+          ...styles.header,
+          width: '100%',
+          justifyContent: 'space-between',
+        }}
+      >
+        <View
+          style={{
+            ...styles.headerSearch,
+            borderColor: theme.selectedButtonColor,
+            height: font.lineHeight * 3,
+          }}
+        >
+          <TextInput style={{ display: 'flex', flex: 1 }} placeholder="Tìm kiếm" />
+          <MaterialCommunityIcons
+            name="magnify"
+            color={theme.selectedButtonColor}
+            size={font.fontSize + 10}
+          />
         </View>
-        <View style={styles.header_ring}>
-          <MaterialCommunityIcons name="bell-ring" color="#fff" size={16} />
-        </View>
+        <LinearGradient
+          colors={['#FF3A44', '#FF8086']}
+          style={{
+            padding: 8,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 100,
+          }}
+        >
+          <MaterialCommunityIcons name="bell-ring" color="#fff" size={font.fontSize + 8} />
+        </LinearGradient>
       </View>
       <View
         style={{
           flexDirection: 'row',
-          marginLeft: 16,
-          marginRight: 16,
-          marginBottom: 16,
-          marginTop: 16,
           alignItems: 'center',
+          marginVertical: 10,
         }}
       >
         <ScrollView showsHorizontalScrollIndicator={false} horizontal={true}>
           {TAGS.map((item, index) => (
-            <View key={index} style={item.selected ? styles.tag_selected : styles.tag}>
-              <Text style={item.selected ? styles.text : styles.text_tag}>{item.title}</Text>
+            <View
+              key={index}
+              style={{
+                ...styles.tag,
+                borderColor: theme.selectedButtonColor,
+                backgroundColor: item.selected ? theme.selectedButtonColor : 'transparent',
+              }}
+            >
+              <Text
+                style={{
+                  color: item.selected ? theme.selectedButtonTextColor : theme.selectedButtonColor,
+                }}
+              >
+                {item.title}
+              </Text>
             </View>
           ))}
         </ScrollView>
@@ -58,91 +98,34 @@ function Favorite({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  body: {
+  container: {
     flex: 1,
-  },
-  topTitle: {
-    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 16,
-    marginLeft: 16,
-  },
-  text_topTitle: {
-    fontSize: 24,
-    color: '#FF3A44',
-    paddingLeft: 120,
+    paddingHorizontal: 20,
   },
   header: {
     flexDirection: 'row',
-    marginTop: 16,
-    marginLeft: 16,
-  },
-  search_input: {
-    flex: 1,
-    flexDirection: 'row',
-    alignContent: 'center',
-  },
-  icon: {
-    fontSize: 24,
-    paddingTop: 6,
-    borderBottomWidth: 1,
-    borderRightWidth: 1,
-    borderTopWidth: 1,
-    borderColor: '#818181',
-    paddingRight: 10,
-    borderBottomRightRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  input: {
-    height: 36,
-    width: '80%',
-    paddingLeft: 24,
-    borderBottomWidth: 1,
-    borderLeftWidth: 1,
-    borderTopWidth: 1,
-    borderColor: '#818181',
-    borderTopLeftRadius: 20,
-    borderBottomLeftRadius: 20,
-  },
-  header_ring: {
-    right: 24,
-    height: 36,
-    width: 36,
-    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FF3A44',
-    borderRadius: 45,
+    marginTop: '3%',
+    justifyContent: 'center',
+  },
+  headerSearch: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 30,
+    width: '80%',
+    paddingHorizontal: 10,
   },
   tag: {
-    height: '100%',
-    width: '20%',
-    height: 40,
     borderWidth: 1,
-    borderColor: '#A6A6A6',
-    marginRight: 16,
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  tag_selected: {
-    height: '100%',
-    width: '20%',
-    height: 40,
-    backgroundColor: '#FF3A44',
-    borderWidth: 1,
-    borderColor: '#A6A6A6',
-    marginRight: 16,
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text_tag: {
-    color: '#000',
-    fontSize: 13,
-  },
-  text: {
-    color: '#fff',
-    fontSize: 13,
+    padding: 10,
+    margin: 5,
   },
 });
 export default Favorite;

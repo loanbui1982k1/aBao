@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Text, StyleSheet } from 'react-native';
 import { ThemeContext } from '../App';
 
@@ -27,9 +27,11 @@ export const FONT_CONFIG = { fontSize: 14, lineHeight: 14, letterSpacing: 0 };
 export default function CustomText({ children, style, ...props }) {
   const { fontWeight = '400', fontStyle } = StyleSheet.flatten(style || {});
   const { theme, font } = React.useContext(ThemeContext);
-  const retFont = `${font.fontFamily}-${FONT_WEIGHT[fontWeight]}${
-    fontStyle === 'italic' ? 'Italic' : ''
-  }`;
+  const retFont =
+    `${font.fontFamily}-` +
+    (fontWeight === '400'
+      ? `${fontStyle === 'italic' ? 'Italic' : ''}`
+      : `${FONT_WEIGHT[fontWeight]}${fontStyle === 'italic' ? 'Italic' : ''}`);
 
   return (
     <Text

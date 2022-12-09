@@ -1,7 +1,18 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Modal, Pressable, TouchableWithoutFeedback } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Modal,
+  Pressable,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+} from 'react-native';
+import { ThemeContext } from '../App';
+import Text, { SectionHeaderText } from '../components/Text';
+import { IconButton } from './CustomButton';
 
 const ConfirmModal = (props) => {
+  const { theme } = React.useContext(ThemeContext);
   const [showConfirmModal, setShowConfirmModal] = useState(props.showModal);
 
   return (
@@ -13,32 +24,46 @@ const ConfirmModal = (props) => {
       hardwareAccelerated
     >
       <TouchableWithoutFeedback onPress={() => props.cancelFunc()}>
-        <View style={styles.confirmContainer}>
-          <View style={styles.confirmModal}>
+        <View
+          style={{ ...styles.confirmContainer, backgroundColor: theme.selectedActiveColor + '50' }}
+        >
+          <View
+            style={{
+              ...styles.confirmModal,
+              backgroundColor: theme.selectedBgColor,
+              borderColor: theme.selectedActiveColor,
+            }}
+          >
             <View style={styles.confirmHeader}>
-              <Text style={styles.headerText}>{props.header}</Text>
+              <SectionHeaderText
+                style={{
+                  textAlign: 'center',
+                }}
+              >
+                {props.header}
+              </SectionHeaderText>
             </View>
 
             <View style={styles.confirmBody}>
-              <Text style={{ color: "#000000" }}>{props.message}</Text>
+              <Text>{props.message}</Text>
             </View>
 
             <View style={styles.buttonContainer}>
-              <Pressable
+              <IconButton
+                text={props.negativeMessage}
                 onPress={() => props.negativeFunc()}
-                style={styles.negativeButton}
-                android_ripple={{ color: '#fff' }}
-              >
-                <Text style={styles.buttonText}>{props.negativeMessage}</Text>
-              </Pressable>
-
-              <Pressable
+                textStyles={{ fontWeight: 400 }}
+              />
+              <IconButton
+                text={props.positiveMessage}
                 onPress={() => props.positiveFunc()}
-                style={styles.normalButton}
-                android_ripple={{ color: '#fff' }}
-              >
-                <Text style={styles.buttonText}>{props.positiveMessage}</Text>
-              </Pressable>
+                textStyles={{ fontWeight: 400, color: theme.selectedButtonColor }}
+                buttonStyles={{
+                  borderWidth: 2,
+                  borderColor: theme.selectedButtonColor,
+                  backgroundColor: theme.selectedBgColor,
+                }}
+              />
             </View>
           </View>
         </View>
@@ -48,26 +73,17 @@ const ConfirmModal = (props) => {
 };
 
 const styles = StyleSheet.create({
-  button: {
-    backgroundColor: 'green',
-    width: 120,
-    height: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20,
-  },
   confirmContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#00000099',
   },
   confirmModal: {
-    backgroundColor: '#fff',
     width: 320,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#000',
+    padding: 4,
+    paddingBottom: 20,
   },
   confirmHeader: {
     marginTop: 20,
@@ -75,40 +91,15 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
   },
-  headerText: {
-    fontWeight: 'bold',
-    fontSize: 18,
-    textAlign: 'center',
-    color: '#000000'
-  },
   confirmBody: {
     padding: 20,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   buttonContainer: {
-    width: 300,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 20,
-  },
-  negativeButton: {
-    backgroundColor: '#f5425d',
-    borderRadius: 20,
-    padding: 10,
-    width: '40%',
-  },
-  normalButton: {
-    backgroundColor: '#627D98',
-    borderRadius: 20,
-    padding: 10,
-    width: '40%',
-  },
-  buttonText: {
-    textAlign: 'center',
-    color: 'white',
-    fontSize: 14,
   },
 });
 

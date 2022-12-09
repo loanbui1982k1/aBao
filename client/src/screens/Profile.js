@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
-import CustomButton from '../utils/CustomButton';
+import CustomButton, { IconButton } from '../utils/CustomButton';
 import IconInput from '../utils/Input';
 import ImagePicker from 'react-native-image-crop-picker';
 import Storage from '@react-native-firebase/storage';
@@ -18,8 +18,11 @@ import {
 import { API_URL } from '../services/constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ConfirmModal from '../utils/ConfirmModal';
+import { HeaderText } from '../components/Text';
+import { ThemeContext } from '../App';
 
 function Profile({ navigation }) {
+  const { font, theme } = React.useContext(ThemeContext);
   const { username, profilePhotoPath, idUser, email } = useSelector((state) => state.taskReducer);
   const dispatch = useDispatch();
   const [password, setPassword] = useState('123456');
@@ -125,9 +128,7 @@ function Profile({ navigation }) {
   };
 
   const uploadImageFirebase = async () => {
-    // save the image as username
     let filename = username;
-    // let filename = image.substring(image.lastIndexOf('/') + 1);
     try {
       await Storage().ref(filename).putFile(image);
     } catch (e) {
@@ -186,7 +187,6 @@ function Profile({ navigation }) {
             .ref(username)
             .getDownloadURL()
             .then((url) => {
-              // // patch data to server
               userInfo['profilePhotoPath'] = url;
               axios.patch(`${API_URL}/users/update`, userInfo).then((res) => {
                 dispatch(setProfilePhotoPathRedux(url));
@@ -197,7 +197,6 @@ function Profile({ navigation }) {
                   })
                 );
               });
-              // Delete image in Android/emulator
               RNFS.exists(image).then((exists) => {
                 if (exists) {
                   RNFS.unlink(image);
@@ -210,7 +209,7 @@ function Profile({ navigation }) {
   };
 
   return (
-    <View style={styles.view}>
+    <View style={{ ...styles.view, backgroundColor: theme.selectedBgColor }}>
       <ScrollView>
         {showModal ? (
           <ConfirmModal
@@ -225,21 +224,20 @@ function Profile({ navigation }) {
           />
         ) : null}
         <View style={styles.header}>
-          <Text style={styles.textHeader}>Trang cá nhân</Text>
+          <HeaderText>Trang cá nhân</HeaderText>
         </View>
         <View style={styles.containerImage}>
           <Image style={styles.image} source={{ uri: image }} resizeMode="contain"></Image>
           {edit && (
             <FontAwesome5
-              size={25}
-              color="#14D39A"
+              size={font.fontSize + 8}
+              color={theme.selectedButtonColor}
               name="pencil-alt"
               onPress={editProfilePicture}
             />
           )}
         </View>
 
-        {/* <Text style={styles.textUsername}>{username}</Text> */}
         <View style={styles.container}>
           <IconInput placeholder="Email" icon="email-outline" value={email} editable={false} />
           <IconInput
@@ -301,25 +299,25 @@ function Profile({ navigation }) {
           )}
         </View>
         <View style={styles.button}>
-          <CustomButton
-            buttonStyles={{ backgroundColor: '#FF3A44', marginTop: 20, minWidth: '80%' }}
-            textStyles={{ color: 'white' }}
+          <IconButton
+            buttonStyles={{ marginTop: 20 }}
             text={edit ? 'Cập nhật' : 'Thay đổi thông tin'}
-            onPressFunc={() => {
+            onPress={() => {
               if (edit) {
                 submit();
               } else setEdit(true);
             }}
           />
-          <CustomButton
-            buttonStyles={styles.logout}
-            textStyles={{ color: '#FF3A44' }}
+          <IconButton
+            buttonStyles={{
+              marginTop: 20,
+              borderWidth: 2,
+              borderColor: theme.selectedButtonColor,
+              backgroundColor: theme.selectedBgColor,
+            }}
+            textStyles={{ color: theme.selectedButtonColor }}
             text={edit ? 'Hủy' : 'Đăng xuất'}
-            pos={!edit && 'left'}
-            iconColor="#FF3A44"
-            iconName="logout"
-            iconSize={28}
-            onPressFunc={() => {
+            onPress={() => {
               if (edit) {
                 setName(username);
                 setEdit(false);
@@ -335,29 +333,16 @@ function Profile({ navigation }) {
 const styles = StyleSheet.create({
   view: {
     flex: 1,
-    backgroundColor: '#ffffff',
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
   },
-  back: {
-    marginTop: 5,
-    marginLeft: -5,
-  },
   header: {
     flex: 1,
-    height: '10%',
     flexDirection: 'row',
     marginTop: '3%',
-  },
-  textHeader: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#FF3A44',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    fontStyle: 'italic',
-    fontFamily: 'notoserif',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   containerImage: {
     flexDirection: 'row',
@@ -372,31 +357,11 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
   },
-  textUsername: {
-    color: '#041E2F',
-    fontSize: 20,
-    fontWeight: 'bold',
-    fontFamily: 'sans-serif-light',
-    textAlign: 'center',
-    marginBottom: '5%',
-  },
-  forget: {
-    color: '#FF3A44',
-    fontSize: 14,
-    textAlign: 'right',
-  },
   button: {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  logout: {
-    backgroundColor: '#ffffff',
-    marginTop: 20,
-    minWidth: '80%',
-    borderWidth: 2,
-    borderColor: '#FF3A44',
   },
 });
 export default Profile;

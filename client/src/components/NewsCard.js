@@ -1,84 +1,82 @@
 import React from 'react';
-import { View, Text, StyleSheet, ImageBackground, Pressable } from 'react-native';
+import { View, StyleSheet, ImageBackground, Pressable } from 'react-native';
 import { ThemeContext } from '../App';
 import { convertApiDate, trimString } from '../services/helper';
+import Text from './Text';
 
 function NewsCard({ item, navigation }) {
   const { theme } = React.useContext(ThemeContext);
   return (
     <Pressable onPress={() => navigation.push('Detail', { item: item })}>
-      <ImageBackground
-        source={{
-          uri:
-            item.urlToImage ||
-            'https://qph.cf2.quoracdn.net/main-qimg-3d69658bf00b1e706b75162a50d19d6c-pjlq',
-        }}
-        resizeMode="cover"
-        blurRadius={8}
-        style={styles.image_news}
-        imageStyle={{
-          borderRadius: 15,
-        }}
-      >
-        <Text
-          style={{
-            ...styles.news_title,
-            color: theme.selectedTextColor,
-            backgroundColor: theme.selectedBgColor + '80',
+      <View style={{ marginBottom: 10 }}>
+        <ImageBackground
+          source={{
+            uri:
+              item.urlToImage ||
+              'https://qph.cf2.quoracdn.net/main-qimg-3d69658bf00b1e706b75162a50d19d6c-pjlq',
           }}
-        >
-          {trimString(item.title, 200)}
-        </Text>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            paddingTop: 30,
+          resizeMode="cover"
+          blurRadius={8}
+          style={styles.imageNews}
+          imageStyle={{
+            borderRadius: 15,
           }}
         >
           <Text
             style={{
-              ...styles.text_author,
+              ...styles.newsTitle,
               color: theme.selectedTextColor,
               backgroundColor: theme.selectedBgColor + '80',
             }}
           >
-            {trimString(item.author, 30)}
+            {trimString(item.title, 200)}
           </Text>
-          <Text
+          <View
             style={{
-              ...styles.text_author,
-              color: theme.selectedTextColor,
-              backgroundColor: theme.selectedBgColor + '80',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingTop: 30,
             }}
           >
-            {convertApiDate(item.publishedAt || '')}
-          </Text>
-        </View>
-      </ImageBackground>
+            <Text
+              style={{
+                ...styles.textAuthor,
+                color: theme.selectedTextColor,
+                backgroundColor: theme.selectedBgColor + '80',
+              }}
+            >
+              {trimString(item.author, 30)}
+            </Text>
+            <Text
+              style={{
+                ...styles.textAuthor,
+                color: theme.selectedTextColor,
+                backgroundColor: theme.selectedBgColor + '80',
+              }}
+            >
+              {convertApiDate(item.publishedAt || '')}
+            </Text>
+          </View>
+        </ImageBackground>
+      </View>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  image_news: {
-    justifyContent: 'center',
-    height: 120,
-    paddingLeft: 16,
-    paddingRight: 16,
-    marginLeft: 16,
-    marginRight: 16,
-    marginBottom: 10,
+  imageNews: {
+    justifyContent: 'space-between',
+    padding: 10,
+    height: 140,
   },
-  news_title: {
-    fontSize: 14,
+  newsTitle: {
     fontStyle: 'italic',
     padding: 10,
     borderRadius: 10,
   },
-  text_author: {
-    fontSize: 14,
+  textAuthor: {
     paddingHorizontal: 10,
+    paddingVertical: 5,
     borderRadius: 4,
   },
 });

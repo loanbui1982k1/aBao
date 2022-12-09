@@ -55,10 +55,7 @@ function Setting({ navigation }) {
       />
       <ScrollView style={{ width: '85%' }}>
         <View style={styles.header}>
-          <TouchableOpacity style={styles.back}>
-            <Ionicons name="chevron-back" size={25} color={theme.selectedTextColor} />
-          </TouchableOpacity>
-          <HeaderText style={styles.textHeader}>Cài đặt</HeaderText>
+          <HeaderText>Cài đặt</HeaderText>
         </View>
         <View style={styles.section}>
           <SectionHeaderText style={styles.title}>Giao diện</SectionHeaderText>
@@ -325,10 +322,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: '3%',
-    width: '100%',
-  },
-  textHeader: {
-    marginLeft: '36%',
+    justifyContent: 'center',
   },
   section: {
     flexDirection: 'column',
