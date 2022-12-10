@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { View, TextInput, StyleSheet, Text, ImageBackground, ScrollView } from 'react-native';
+import { View, StyleSheet, ImageBackground, ScrollView } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
-import { JSDOM } from 'jsdom';
-import { Readability } from '@mozilla/readability';
 import { useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_KEY, BASE_URL } from '../services/constants';
 import { trimString } from '../services/helper';
 import NewsCard from '../components/NewsCard';
-import { setEmailRedux, setIdUserRedux, setProfilePhotoPathRedux, setUsernameRedux } from '../redux/actions';
-
+import {
+  setEmailRedux,
+  setIdUserRedux,
+  setProfilePhotoPathRedux,
+  setUsernameRedux,
+} from '../redux/actions';
+import { ThemeContext } from '../App';
+import LinearGradient from 'react-native-linear-gradient';
+import Text, { SectionHeaderText } from '../components/Text';
+import TextInput from '../components/TextInput';
 
 export const TAGS = [
   { title: 'Kinh tế', api: 'business', selected: true },
@@ -23,7 +29,7 @@ export const TAGS = [
 ];
 
 function Home({ navigation }) {
-  const isCarousel = React.useRef(null);
+  const { theme, font } = React.useContext(ThemeContext);
   const [hotNews, setHotNews] = useState([]);
   const [news, setNews] = useState([]);
 
@@ -31,7 +37,7 @@ function Home({ navigation }) {
 
   useEffect(() => {
     AsyncStorage.getItem('user').then((user) => {
-      let userData = JSON.parse(user)
+      let userData = JSON.parse(user);
       if (userData) {
         dispatch(setEmailRedux(userData.email));
         dispatch(setUsernameRedux(userData.username));
@@ -56,81 +62,137 @@ function Home({ navigation }) {
   }, []);
 
   return (
-    <View style={styles.body}>
-      <View style={styles.header}>
-        <View style={styles.search_input}>
-          <TextInput style={styles.input} placeholder="Tìm kiếm" />
-          <MaterialCommunityIcons name="magnify" color="#818181" size={16} style={styles.icon} />
+    <View style={{ ...styles.container, backgroundColor: theme.selectedBgColor }}>
+      <View
+        style={{
+          ...styles.header,
+          width: '100%',
+          justifyContent: 'space-between',
+        }}
+      >
+        <View
+          style={{
+            ...styles.headerSearch,
+            borderColor: theme.selectedButtonColor,
+            height: font.lineHeight * 3,
+          }}
+        >
+          <TextInput style={{ display: 'flex', flex: 1 }} placeholder="Tìm kiếm" />
+          <MaterialCommunityIcons
+            name="magnify"
+            color={theme.selectedButtonColor}
+            size={font.fontSize + 10}
+          />
         </View>
-        <View style={styles.header_ring}>
-          <MaterialCommunityIcons name="bell-ring" color="#fff" size={16} />
-        </View>
+        <LinearGradient colors={['#FF3A44', '#FF8086']} style={styles.linearGradient}>
+          <MaterialCommunityIcons name="bell-ring" color="#fff" size={font.fontSize + 8} />
+        </LinearGradient>
       </View>
-      <View style={styles.news_laster}>
-        <View style={styles.news_laster_header}>
-          <Text style={styles.title}>Mới nhất</Text>
-          <View style={styles.all_news_laster}>
+
+      <View style={styles.topNewsContainer}>
+        <View style={styles.topNewsContent}>
+          <Text
+            style={{
+              ...styles.topNewsTitle,
+              fontSize: font.fontSize + 4,
+              lineHeight: font.lineHeight + 4,
+              color: theme.selectedTextColor,
+            }}
+          >
+            Mới nhất
+          </Text>
+          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             <Text
               style={{
-                color: '#0080FF',
-                fontSize: 14,
+                ...styles.topNewsTitle,
+                color: theme.selectedActiveColor,
               }}
             >
               Tất cả
             </Text>
             <MaterialCommunityIcons
               name="arrow-right"
-              color="#0080FF"
-              size={16}
-              style={{
-                paddingLeft: 16,
-              }}
+              color={theme.selectedButtonColor}
+              size={font.fontSize + 10}
             />
           </View>
         </View>
-        {hotNews.map((item, index) => (
-          <ImageBackground
-            key={index}
-            source={{
-              uri:
-                item.urlToImage ||
-                'https://qph.cf2.quoracdn.net/main-qimg-3d69658bf00b1e706b75162a50d19d6c-pjlq',
-            }}
-            blurRadius={8}
-            resizeMode="cover"
-            style={styles.image}
-            imageStyle={{
-              borderRadius: 15,
-            }}
-          >
+
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {hotNews.map((item, index) => (
             <View
+              key={index}
               style={{
-                paddingBottom: 40,
+                height: 210,
               }}
             >
-              <Text style={styles.text_author}>Được đăng bởi {trimString(item.author, 20)}</Text>
-              <Text style={styles.news_laster_tittle}>{trimString(item.title)}</Text>
+              <ImageBackground
+                source={{
+                  uri:
+                    item.urlToImage ||
+                    'https://qph.cf2.quoracdn.net/main-qimg-3d69658bf00b1e706b75162a50d19d6c-pjlq',
+                }}
+                blurRadius={8}
+                resizeMode="cover"
+                style={styles.imageContent}
+                imageStyle={styles.imageStyle}
+              >
+                <View
+                  style={{
+                    ...styles.topNewsText,
+                    backgroundColor: theme.selectedButtonColor + '80',
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: theme.selectedButtonTextColor,
+                      fontWeight: 'bold',
+                      fontStyle: 'italic',
+                    }}
+                  >
+                    Được đăng bởi {trimString(item.author, 20)}
+                  </Text>
+                  <SectionHeaderText
+                    style={{
+                      color: theme.selectedButtonTextColor,
+                    }}
+                  >
+                    {trimString(item.title)}
+                  </SectionHeaderText>
+                </View>
+                <View>
+                  <Text>{trimString(item.description, 200)}</Text>
+                </View>
+              </ImageBackground>
             </View>
-            <View>
-              <Text style={styles.text}>{trimString(item.description, 200)}</Text>
-            </View>
-          </ImageBackground>
-        ))}
+          ))}
+        </ScrollView>
       </View>
+
       <View
         style={{
           flexDirection: 'row',
-          marginLeft: 16,
-          marginRight: 16,
-          marginBottom: 16,
-          marginTop: 16,
           alignItems: 'center',
+          marginVertical: 10,
         }}
       >
         <ScrollView showsHorizontalScrollIndicator={false} horizontal={true}>
           {TAGS.map((item, index) => (
-            <View key={index} style={item.selected ? styles.tag_selected : styles.tag}>
-              <Text style={item.selected ? styles.text : styles.text_tag}>{item.title}</Text>
+            <View
+              key={index}
+              style={{
+                ...styles.tag,
+                borderColor: theme.selectedButtonColor,
+                backgroundColor: item.selected ? theme.selectedButtonColor : 'transparent',
+              }}
+            >
+              <Text
+                style={{
+                  color: item.selected ? theme.selectedButtonTextColor : theme.selectedButtonColor,
+                }}
+              >
+                {item.title}
+              </Text>
             </View>
           ))}
         </ScrollView>
@@ -146,114 +208,69 @@ function Home({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  body: {
+  container: {
     flex: 1,
-  },
-  title: {
-    fontSize: 20,
-    width: '80%',
-    fontWeight: 'bold',
-    color: 'black',
-    paddingLeft: 16,
+    alignItems: 'center',
+    paddingHorizontal: 20,
   },
   header: {
     flexDirection: 'row',
-    marginTop: 16,
-    marginLeft: 16,
-  },
-  search_input: {
-    flex: 1,
-    flexDirection: 'row',
-    alignContent: 'center',
-  },
-  icon: {
-    fontSize: 24,
-    paddingTop: 6,
-    borderBottomWidth: 1,
-    borderRightWidth: 1,
-    borderTopWidth: 1,
-    borderColor: '#818181',
-    paddingRight: 10,
-    borderBottomRightRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  input: {
-    height: 36,
-    width: '80%',
-    paddingLeft: 24,
-    borderBottomWidth: 1,
-    borderLeftWidth: 1,
-    borderTopWidth: 1,
-    borderColor: '#818181',
-    borderTopLeftRadius: 20,
-    borderBottomLeftRadius: 20,
-  },
-  header_ring: {
-    right: 24,
-    height: 36,
-    width: 36,
-    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#FF3A44',
-    borderRadius: 45,
+    marginTop: '3%',
+    justifyContent: 'center',
   },
-  news_laster_header: {
+  headerSearch: {
     display: 'flex',
     flexDirection: 'row',
-    marginBottom: 20,
-    marginTop: 16,
+    justifyContent: 'space-between',
     alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 30,
+    width: '80%',
+    paddingHorizontal: 10,
   },
-  all_news_laster: {
-    flexDirection: 'row',
-  },
-  image: {
+  linearGradient: {
+    padding: 8,
+    display: 'flex',
     justifyContent: 'center',
-    height: 210,
-    paddingLeft: 16,
-    paddingRight: 16,
-    marginLeft: 16,
-    marginRight: 16,
-  },
-  text_author: {
-    color: '#fff',
-    fontSize: 14,
-  },
-  news_laster_tittle: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 20,
+    alignItems: 'center',
+    borderRadius: 100,
   },
   tag: {
-    height: '100%',
-    width: '20%',
-    height: 40,
     borderWidth: 1,
-    borderColor: '#A6A6A6',
-    marginRight: 16,
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 10,
+    margin: 5,
+    marginTop: 0,
   },
-  tag_selected: {
+  topNewsTitle: {
+    fontWeight: 'bold',
+  },
+  imageStyle: {
+    borderRadius: 15,
+  },
+  imageContent: {
+    display: 'flex',
+    justifyContent: 'space-evenly',
+    paddingHorizontal: 10,
     height: '100%',
-    width: '20%',
-    height: 40,
-    backgroundColor: '#FF3A44',
-    borderWidth: 1,
-    borderColor: '#A6A6A6',
-    marginRight: 16,
-    borderRadius: 30,
-    justifyContent: 'center',
+  },
+  topNewsContainer: {
+    display: 'flex',
+    width: '100%',
+    marginVertical: 10,
+  },
+  topNewsContent: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
     alignItems: 'center',
   },
-  text_tag: {
-    color: '#000',
-    fontSize: 13,
-  },
-  text: {
-    color: '#fff',
-    fontSize: 13,
+  topNewsText: {
+    padding: 10,
+    borderRadius: 10,
   },
 });
 export default Home;

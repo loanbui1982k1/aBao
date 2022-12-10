@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Image,
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  useWindowDimensions,
-  SafeAreaView,
-  Pressable,
-} from 'react-native';
+import { Image, ScrollView, StyleSheet, useWindowDimensions, SafeAreaView } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { API_URL } from '../services/constants';
 import axios from 'axios';
 import { convertApiDate } from '../services/helper';
+import Text, { SectionHeaderText } from '../components/Text';
+import { ThemeContext } from '../App';
+import CustomButton from '../utils/CustomButton';
+import View from '../components/View';
 
 function Detail(props) {
   const item = props.route.params.item;
   const window = useWindowDimensions();
+  const { theme, font } = React.useContext(ThemeContext);
   const [topTitle, setTopTitle] = useState(window.width);
   const [heart, setHeart] = useState(false);
   const [updateView, setUpdateView] = useState(false);
@@ -34,47 +30,36 @@ function Detail(props) {
 
   return (
     <SafeAreaView>
-      <View style={[styles.title, { marginTop: updateView ? 0 : window.width * 0.65 - topTitle }]}>
+      <View
+        style={{
+          ...styles.title,
+          marginTop: updateView ? 0 : window.width * 0.65 - topTitle,
+          backgroundColor: theme.selectedButtonColor,
+        }}
+      >
         <Text style={{ display: updateView ? 'none' : 'flex' }}>
           {convertApiDate(item.publishedAt || '')}
         </Text>
-        <Text
-          style={[
-            styles.text,
-            {
-              fontSize: 18,
-              fontWeight: 'bold',
-            },
-          ]}
-        >
-          {item.title}
-        </Text>
-        <Text
-          style={[
-            styles.boldText,
-            {
-              display: updateView ? 'none' : 'flex',
-            },
-          ]}
-        >
-          Đăng bởi {item.author}
+        <SectionHeaderText style={{ marginVertical: 6 }}>{item.title}</SectionHeaderText>
+        <Text style={{ ...styles.boldText, display: updateView ? 'none' : 'flex' }}>
+          Đăng bởi {item.author || 'Ẩn danh'}
         </Text>
       </View>
-      <Pressable
+      <CustomButton
         onPress={() => props.navigation.goBack()}
-        style={[
-          styles.linearGradient,
-          {
-            top: 40,
-            left: 40,
-            shadowColor: '#FF8086',
-            backgroundColor: 'white',
-            display: updateView ? 'none' : 'flex',
-          },
-        ]}
+        style={{
+          ...styles.linearGradient,
+          top: 40,
+          left: 40,
+          display: updateView ? 'none' : 'flex',
+        }}
       >
-        <MaterialCommunityIcons name="chevron-left" color={'black'} size={20} />
-      </Pressable>
+        <MaterialCommunityIcons
+          name="chevron-left"
+          color={theme.selectedButtonTextColor}
+          size={font.fontSize + 14}
+        />
+      </CustomButton>
       <LinearGradient
         colors={['#FF3A44', '#FF8086']}
         style={[
@@ -82,14 +67,18 @@ function Detail(props) {
           updateView ? { bottom: 40, right: 40 + 80 } : { top: 40, right: 40 },
         ]}
       >
-        <MaterialCommunityIcons name="volume-high" color={'white'} size={32} />
+        <MaterialCommunityIcons name="volume-high" color={'white'} size={font.fontSize + 14} />
       </LinearGradient>
       <LinearGradient
         colors={['#FF3A44', '#FF8086']}
         style={[styles.linearGradient, { bottom: 40, right: 40 }]}
         onTouchStart={() => setHeart(!heart)}
       >
-        <MaterialCommunityIcons name={heart ? 'heart' : 'heart-broken'} color={'white'} size={32} />
+        <MaterialCommunityIcons
+          name={heart ? 'heart' : 'heart-broken'}
+          color={'white'}
+          size={font.fontSize + 14}
+        />
       </LinearGradient>
 
       <ScrollView
@@ -120,13 +109,14 @@ function Detail(props) {
 }
 
 const styles = StyleSheet.create({
-  body: {
+  container: {
     flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: 20,
   },
   title: {
     position: 'absolute',
     margin: 20,
-    backgroundColor: '#D9D9D9',
     borderRadius: 40,
     padding: 24,
     paddingLeft: 32,
@@ -139,12 +129,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     marginTop: -40,
-    backgroundColor: 'white',
   },
   text: {
-    fontSize: 14,
-    lineHeight: 24,
-    color: 'black',
     paddingTop: 12,
   },
   boldText: {

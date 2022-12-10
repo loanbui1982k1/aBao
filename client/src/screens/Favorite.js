@@ -119,6 +119,13 @@ const styles = StyleSheet.create({
     width: '80%',
     paddingHorizontal: 10,
   },
+  linearGradient: {
+    padding: 8,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 100,
+  },
   tag: {
     borderWidth: 1,
     borderRadius: 30,
