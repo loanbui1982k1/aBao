@@ -1,42 +1,73 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ThemeContext } from '../App';
 import NewsCard from '../components/NewsCard';
 import { HeaderText } from '../components/Text';
-import { API_KEY, BASE_URL } from '../services/constants';
-import { TAGS } from './Home';
 import Text from '../components/Text';
 import TextInput from '../components/TextInput';
 import LinearGradient from 'react-native-linear-gradient';
-import { getCategory, getNews } from '../services/api';
+import { getCategory, getFavouriteNewsByTag, getFavouriteTags, getNews } from '../services/api';
 import CustomButton from '../utils/CustomButton';
+import { useSelector } from 'react-redux';
 
 function Favorite({ navigation }) {
+  const { idUser } = useSelector((state) => state.taskReducer);
   const { theme, font } = React.useContext(ThemeContext);
   const [news, setNews] = useState([]);
 
   const [tags, setTags] = useState([]);
   const [selectedTag, setSelectedTag] = useState(null);
 
-  useEffect(() => {
-    getCategory()
-      .then((res) => {
-        setTags(res.data.map((i) => i.nameCategory));
-        setSelectedTag(res.data[0].nameCategory);
-      })
-      .catch(() => {});
-  }, []);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    selectedTag &&
-      getNews(selectedTag)
+  const getTags = async () => {
+    if (idUser) {
+      await getFavouriteTags(idUser)
+        .then((res) => {
+          setTags(res.data.map((i) => i.nameCategory));
+          setSelectedTag(res.data[0].nameCategory);
+        })
+        .catch(() => {});
+    } else {
+      await getCategory()
+        .then((res) => {
+          setTags(res.data.map((i) => i.nameCategory));
+          setSelectedTag(res.data[0]?.nameCategory);
+        })
+        .catch(() => {});
+    }
+  };
+
+  const getNews = async () => {
+    if (idUser) {
+      await getFavouriteNewsByTag({ idUser: idUser, nameCategory: selectedTag })
         .then((res) => {
           setNews(res.data);
         })
         .catch(() => {});
+    } else {
+      await getNews(selectedTag)
+        .then((res) => {
+          setNews(res.data);
+        })
+        .catch(() => {});
+    }
+  };
+
+  useEffect(() => {
+    getTags();
+  }, [idUser]);
+
+  useEffect(() => {
+    if (selectedTag) getNews();
   }, [selectedTag]);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+
+    getTags().then(() => getNews().then(() => setRefreshing(false)));
+  };
 
   return (
     <View style={{ ...styles.container, backgroundColor: theme.selectedBgColor }}>
@@ -85,7 +116,17 @@ function Favorite({ navigation }) {
           marginVertical: 10,
         }}
       >
-        <ScrollView showsHorizontalScrollIndicator={false} horizontal={true}>
+        <ScrollView
+          showsHorizontalScrollIndicator={false}
+          horizontal={true}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={theme.selectedActiveColor}
+            />
+          }
+        >
           {tags.map((item, index) => (
             <CustomButton
               key={index}
@@ -118,6 +159,14 @@ function Favorite({ navigation }) {
           return <NewsCard key={index} item={item} navigation={navigation} />;
         })}
       </ScrollView>
+
+      <LinearGradient
+        colors={['#FF3A44', '#FF8086']}
+        style={[styles.linearGradient, { position: 'absolute', zIndex: 1, bottom: 40, right: 40 }]}
+        onTouchStart={onRefresh}
+      >
+        <MaterialCommunityIcons name={'reload'} color={'white'} size={font.fontSize + 14} />
+      </LinearGradient>
     </View>
   );
 }

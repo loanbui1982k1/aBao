@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ImageBackground, ScrollView } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_KEY, BASE_URL } from '../services/constants';
 import { trimString } from '../services/helper';
 import NewsCard from '../components/NewsCard';
 import {
@@ -19,16 +17,6 @@ import Text, { SectionHeaderText } from '../components/Text';
 import TextInput from '../components/TextInput';
 import { getCategory, getNews } from '../services/api';
 import CustomButton from '../utils/CustomButton';
-
-export const TAGS = [
-  { title: 'Kinh tế', api: 'business', selected: true },
-  { title: 'Giải trí', api: 'entertainment', selected: false },
-  { title: 'Chung', api: 'general', selected: false },
-  { title: 'Sức khỏe', api: 'health', selected: false },
-  { title: 'Khoa học', api: 'science', selected: false },
-  { title: 'Thể thao', api: 'sports', selected: false },
-  { title: 'Công nghệ', api: 'technology', selected: false },
-];
 
 function Home({ navigation }) {
   const { theme, font } = React.useContext(ThemeContext);

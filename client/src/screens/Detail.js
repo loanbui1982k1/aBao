@@ -6,62 +6,21 @@ import Text, { fontFamily, SectionHeaderText } from '../components/Text';
 import { ThemeContext } from '../App';
 import CustomButton from '../utils/CustomButton';
 import View from '../components/View';
-import { WebView } from 'react-native-webview';
 import Tts from 'react-native-tts';
+import { useSelector } from 'react-redux';
+import { deleteFavourite, postFavourite } from '../services/api';
 
-const html = [
-  '<div>',
-  '</div>',
-  '<p>',
-  '</p>',
-  '<br>',
-  '</br>',
-  '<span>',
-  '</span>',
-  '\\n',
-  '\n',
-  '\\t',
-  '\\r',
-  '\\',
-  '<image>',
-  '</image>',
-  '<img>',
-  '</img>',
-  '<strong>',
-  '</strong>',
-  '<em>',
-  '</em>',
-  '<b>',
-  '</b>',
-  '<i>',
-  '</i>',
-  '<u>',
-  '</u>',
-  '<a>',
-  '</a>',
-  '<h1>',
-  '</h1>',
-  '<h2>',
-  '</h2>',
-  '<h3>',
-  '</h3>',
-  '<h4>',
-  '</h4>',
-  '<caption>',
-  '</caption>',
-  '<blockquote>',
-  '</blockquote>',
-  '<li>',
-  '</li>',
-  '<ul>',
-  '</ul>',
-  '<ol>',
-  '</ol>',
-  '<pre>',
-  '</pre>',
-  '<code>',
-  '</code>',
-];
+function onlyText(string_res) {
+  var content_res = '';
+  var string_components = string_res.split('\n');
+  for (let i = 0; i < string_components.length; ++i) {
+    if (string_components[i].includes('<p>')) {
+      string_components[i] = string_components[i].substring(3);
+      content_res += string_components[i] + '\n';
+    }
+  }
+  return content_res;
+}
 
 function urlify(text) {
   var urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -69,10 +28,11 @@ function urlify(text) {
 }
 
 function Detail(props) {
+  const { idUser } = useSelector((state) => state.taskReducer);
   const item = props.route.params.item;
   const window = useWindowDimensions();
   const { theme, font } = React.useContext(ThemeContext);
-  const [topTitle, setTopTitle] = useState(window.width);
+
   const [heart, setHeart] = useState(false);
   const [updateView, setUpdateView] = useState(false);
   const [speak, setSpeak] = useState(false);
@@ -82,16 +42,13 @@ function Detail(props) {
       Tts.setDefaultLanguage('vi-VN');
       Tts.stop();
     });
-  }, []);
+    item.content = urlify(item.content).replace('\\n', '');
+  }, [props]);
 
   useEffect(() => {
     if (speak) {
       Tts.speak(item.title);
       var speakText = item.content;
-      speakText = urlify(speakText);
-      html.forEach((i) => {
-        speakText.replace(i, ' ');
-      });
       speakText
         .split(/(.{400})/)
         .filter((x) => x.length == 400)
@@ -103,23 +60,18 @@ function Detail(props) {
     }
   }, [speak]);
 
+  useEffect(() => {
+    if (idUser) {
+      if (heart) {
+        postFavourite({ idUser: idUser, idNewspaper: item.idNewspaper });
+      } else {
+        deleteFavourite({ idUser: idUser, idNewspaper: item.idNewspaper });
+      }
+    }
+  }, [heart]);
+
   return (
     <SafeAreaView>
-      <View
-        style={{
-          ...styles.title,
-          marginTop: updateView ? 0 : window.width * 0.65 - topTitle,
-          backgroundColor: theme.selectedActiveColor,
-        }}
-      >
-        <Text style={{ display: updateView ? 'none' : 'flex' }}>
-          {item.date?.slice(0, -15) || ''}
-        </Text>
-        <SectionHeaderText style={{ marginVertical: 6 }}>{item.title}</SectionHeaderText>
-        <Text style={{ ...styles.boldText, display: updateView ? 'none' : 'flex' }}>
-          Đăng bởi {item.writer || 'Ẩn danh'}
-        </Text>
-      </View>
       <CustomButton
         onPress={() => {
           Tts.stop();
@@ -146,26 +98,27 @@ function Detail(props) {
         ]}
         onTouchStart={() => setSpeak(!speak)}
       >
-        <MaterialCommunityIcons name="volume-high" color={'white'} size={font.fontSize + 14} />
+        <MaterialCommunityIcons
+          name={speak ? 'volume-off' : 'volume-high'}
+          color={'white'}
+          size={font.fontSize + 14}
+        />
       </LinearGradient>
       <LinearGradient
         colors={['#FF3A44', '#FF8086']}
         style={[styles.linearGradient, { bottom: 40, right: 40 }]}
-        onTouchStart={() => setHeart(!heart)}
+        onTouchStart={() => {
+          setHeart(!heart);
+        }}
       >
         <MaterialCommunityIcons
-          name={heart ? 'heart' : 'heart-broken'}
+          name={heart ? 'heart-broken' : 'heart'}
           color={'white'}
           size={font.fontSize + 14}
         />
       </LinearGradient>
 
-      <ScrollView
-        onScroll={(event) => {
-          setTopTitle(event.nativeEvent.contentOffset.y);
-          setUpdateView(topTitle > window.width * 0.65);
-        }}
-      >
+      <ScrollView>
         <View style={styles.body}>
           <Image
             style={{
@@ -178,8 +131,23 @@ function Detail(props) {
                 'https://qph.cf2.quoracdn.net/main-qimg-3d69658bf00b1e706b75162a50d19d6c-pjlq',
             }}
           />
+          <View
+            style={{
+              ...styles.title,
+              marginTop: -140,
+              backgroundColor: theme.selectedActiveColor,
+            }}
+          >
+            <Text style={{ display: updateView ? 'none' : 'flex' }}>
+              {item.date?.slice(0, -15) || ''}
+            </Text>
+            <SectionHeaderText style={{ marginVertical: 6 }}>{item.title}</SectionHeaderText>
+            <Text style={{ ...styles.boldText, display: updateView ? 'none' : 'flex' }}>
+              Đăng bởi {item.writer || 'Ẩn danh'}
+            </Text>
+          </View>
           <View style={styles.content}>
-            <WebView
+            {/* <WebView
               source={{
                 html: `<div style="overflow-wrap: break-word;">` + item.content + '</div>',
               }}
@@ -192,7 +160,8 @@ function Detail(props) {
                 backgroundColor: theme.selectedBgColor,
               }}
               minimumFontSize={font.fontSize * 3}
-            />
+            /> */}
+            <Text>{item.content}</Text>
           </View>
         </View>
       </ScrollView>
@@ -207,13 +176,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   title: {
-    position: 'absolute',
-    margin: 20,
     borderRadius: 40,
     padding: 24,
-    paddingLeft: 32,
-    paddingRight: 32,
     zIndex: 1,
+    width: '90%',
+    marginHorizontal: '5%',
   },
   content: {
     padding: 28,

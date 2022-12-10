@@ -6,7 +6,7 @@ const { Favourite } = require('../models');
 router.get('/newspaper', async (req, res) => {
   const { query } = req;
   const result = await db.sequelize.query(
-    `select n.* from favourites f inner join newspapers n on f.idNewspaper = n.idNewspaper 
+    `select n.* from Favourites f inner join Newspapers n on f.idNewspaper = n.idNewspaper 
       where f.idUser = ${query.idUser} and n.nameCategory = "${query.nameCategory}"`,
     { type: db.sequelize.QueryTypes.SELECT }
   );
@@ -16,7 +16,7 @@ router.get('/newspaper', async (req, res) => {
 router.get('/:idUser', async (req, res) => {
   const { idUser } = req.params;
   const result = await db.sequelize.query(
-    `select n.* from favourites f inner join newspapers n on f.idNewspaper = n.idNewspaper 
+    `select n.* from Favourites f inner join Newspapers n on f.idNewspaper = n.idNewspaper 
       where f.idUser = ${idUser}`,
     { type: db.sequelize.QueryTypes.SELECT }
   );
@@ -25,13 +25,17 @@ router.get('/:idUser', async (req, res) => {
 
 router.get('/category/:idUser', async (req, res) => {
   const { idUser } = req.params;
-  const result = await db.sequelize.query(
-    `select n.nameCategory from favourites f inner join newspapers n on f.idNewspaper = n.idNewspaper 
-    where f.idUser = ${idUser} 
-    group by nameCategory`,
-    { type: db.sequelize.QueryTypes.SELECT }
-  );
-  res.json(result);
+  try {
+    const result = await db.sequelize.query(
+      `select n.nameCategory from Favourites f inner join Newspapers n on f.idNewspaper = n.idNewspaper 
+      where f.idUser = ${idUser} 
+      group by nameCategory`,
+      { type: db.sequelize.QueryTypes.SELECT }
+    );
+    res.json(result);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 router.post('/', async (req, res) => {
@@ -45,14 +49,13 @@ router.post('/', async (req, res) => {
 
 router.delete('/', async (req, res) => {
   const { query } = req;
-  console.log(query)
-  Favourite.destroy(
-    {
-      where: {
-        idUser: query.idUser,
-        idNewspaper: query.idNewspaper,
-      }
-    });
+  console.log(query);
+  Favourite.destroy({
+    where: {
+      idUser: query.idUser,
+      idNewspaper: query.idNewspaper,
+    },
+  });
   res.json('SUCCESS');
 });
 

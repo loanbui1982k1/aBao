@@ -1,13 +1,15 @@
 import React from 'react';
-import { View, StyleSheet, ImageBackground, Pressable } from 'react-native';
+import { View, StyleSheet, ImageBackground, Pressable, Dimensions } from 'react-native';
 import { ThemeContext } from '../App';
-import { convertApiDate, trimString } from '../services/helper';
+import { trimString } from '../services/helper';
 import Text from './Text';
 
 function NewsCard({ item, navigation }) {
   const { theme } = React.useContext(ThemeContext);
+  const { width, height } = Dimensions.get('window');
+
   return (
-    <View style={{ marginBottom: 14 }}>
+    <View style={{ marginBottom: 14, width: width * 0.9 }}>
       <Pressable onPress={() => navigation.push('Detail', { item: item })}>
         <ImageBackground
           source={{
