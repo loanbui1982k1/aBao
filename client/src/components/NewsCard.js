@@ -12,7 +12,7 @@ function NewsCard({ item, navigation }) {
         <ImageBackground
           source={{
             uri:
-              item.urlToImage ||
+              item.image ||
               'https://qph.cf2.quoracdn.net/main-qimg-3d69658bf00b1e706b75162a50d19d6c-pjlq',
           }}
           resizeMode="cover"
@@ -45,7 +45,7 @@ function NewsCard({ item, navigation }) {
                 backgroundColor: theme.selectedBgColor + '80',
               }}
             >
-              {trimString(item.author, 20)}
+              {trimString(item.writer, 20)}
             </Text>
             <Text
               style={{
@@ -54,7 +54,7 @@ function NewsCard({ item, navigation }) {
                 backgroundColor: theme.selectedBgColor + '80',
               }}
             >
-              {convertApiDate(item.publishedAt || '')}
+              {item.date?.slice(0, -15) || ''}
             </Text>
           </View>
         </ImageBackground>

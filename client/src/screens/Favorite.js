@@ -10,16 +10,33 @@ import { TAGS } from './Home';
 import Text from '../components/Text';
 import TextInput from '../components/TextInput';
 import LinearGradient from 'react-native-linear-gradient';
+import { getCategory, getNews } from '../services/api';
+import CustomButton from '../utils/CustomButton';
 
 function Favorite({ navigation }) {
   const { theme, font } = React.useContext(ThemeContext);
   const [news, setNews] = useState([]);
 
+  const [tags, setTags] = useState([]);
+  const [selectedTag, setSelectedTag] = useState(null);
+
   useEffect(() => {
-    axios
-      .get(BASE_URL + '/top-headlines?country=us&pageSize=10' + API_KEY)
-      .then((res) => setNews(res.data.articles));
+    getCategory()
+      .then((res) => {
+        setTags(res.data.map((i) => i.nameCategory));
+        setSelectedTag(res.data[0].nameCategory);
+      })
+      .catch(() => {});
   }, []);
+
+  useEffect(() => {
+    selectedTag &&
+      getNews(selectedTag)
+        .then((res) => {
+          setNews(res.data);
+        })
+        .catch(() => {});
+  }, [selectedTag]);
 
   return (
     <View style={{ ...styles.container, backgroundColor: theme.selectedBgColor }}>
@@ -60,6 +77,7 @@ function Favorite({ navigation }) {
           <MaterialCommunityIcons name="bell-ring" color="#fff" size={font.fontSize + 8} />
         </LinearGradient>
       </View>
+
       <View
         style={{
           flexDirection: 'row',
@@ -68,26 +86,33 @@ function Favorite({ navigation }) {
         }}
       >
         <ScrollView showsHorizontalScrollIndicator={false} horizontal={true}>
-          {TAGS.map((item, index) => (
-            <View
+          {tags.map((item, index) => (
+            <CustomButton
               key={index}
+              onPress={() => {
+                setSelectedTag(item);
+              }}
               style={{
                 ...styles.tag,
                 borderColor: theme.selectedButtonColor,
-                backgroundColor: item.selected ? theme.selectedButtonColor : 'transparent',
+                backgroundColor: item === selectedTag ? theme.selectedButtonColor : 'transparent',
               }}
             >
               <Text
                 style={{
-                  color: item.selected ? theme.selectedButtonTextColor : theme.selectedButtonColor,
+                  color:
+                    item === selectedTag
+                      ? theme.selectedButtonTextColor
+                      : theme.selectedButtonColor,
                 }}
               >
-                {item.title}
+                {item}
               </Text>
-            </View>
+            </CustomButton>
           ))}
         </ScrollView>
       </View>
+
       <ScrollView showsVerticalScrollIndicator={false}>
         {news.map((item, index) => {
           return <NewsCard key={index} item={item} navigation={navigation} />;

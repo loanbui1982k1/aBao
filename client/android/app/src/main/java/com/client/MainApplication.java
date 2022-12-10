@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.webview.RNCWebViewPackage;
 import net.no_mad.tts.TextToSpeechPackage;
 import com.reactnativecommunity.picker.RNCPickerPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;

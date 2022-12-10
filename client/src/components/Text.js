@@ -24,6 +24,11 @@ export const disableStyles = {
 export const FONT_FAMILY = ['Roboto', 'RobotoMono', 'NotoSerif', 'PlayfairDisplay'];
 export const FONT_CONFIG = { fontSize: 14, lineHeight: 14, letterSpacing: 0 };
 
+export const fontFamily = () => {
+  const { font } = React.useContext(ThemeContext);
+  return `${font.fontFamily}-Regular`;
+};
+
 export default function CustomText({ children, style, ...props }) {
   const { fontWeight = '400', fontStyle } = StyleSheet.flatten(style || {});
   const { theme, font } = React.useContext(ThemeContext);
