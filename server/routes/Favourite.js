@@ -1,5 +1,4 @@
 const express = require('express');
-const { where } = require('sequelize/types');
 const router = express.Router();
 const db = require('../models');
 const { Favourite } = require('../models');
