@@ -17,6 +17,7 @@ import { ThemeContext } from '../App';
 import LinearGradient from 'react-native-linear-gradient';
 import Text, { SectionHeaderText } from '../components/Text';
 import TextInput from '../components/TextInput';
+import { getCategory } from '../services/api';
 
 export const TAGS = [
   { title: 'Kinh tế', api: 'business', selected: true },
@@ -32,10 +33,21 @@ function Home({ navigation }) {
   const { theme, font } = React.useContext(ThemeContext);
   const [hotNews, setHotNews] = useState([]);
   const [news, setNews] = useState([]);
+  const [tags, setTags] = useState([]);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
+    getCategory()
+      .then((res) => {
+        setTags(
+          res.data.map((i, index) => ({
+            title: i.nameCategory,
+            selected: index === 0 ? true : false,
+          }))
+        );
+      })
+      .catch(() => {});
     AsyncStorage.getItem('user').then((user) => {
       let userData = JSON.parse(user);
       if (userData) {
@@ -50,14 +62,12 @@ function Home({ navigation }) {
       .then((res) => setHotNews(res.data.articles))
       .catch(function (error) {
         // handle error
-        console.log(error);
       });
     axios
       .get(BASE_URL + '/top-headlines?country=us&pageSize=20' + API_KEY)
       .then((res) => setNews(res.data.articles))
       .catch(function (error) {
         // handle error
-        console.log(error);
       });
   }, []);
 
@@ -177,7 +187,7 @@ function Home({ navigation }) {
         }}
       >
         <ScrollView showsHorizontalScrollIndicator={false} horizontal={true}>
-          {TAGS.map((item, index) => (
+          {tags.map((item, index) => (
             <View
               key={index}
               style={{
