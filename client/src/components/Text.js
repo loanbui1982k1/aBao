@@ -30,7 +30,7 @@ export default function CustomText({ children, style, ...props }) {
   const retFont =
     `${font.fontFamily}-` +
     (fontWeight === '400'
-      ? `${fontStyle === 'italic' ? 'Italic' : ''}`
+      ? `${fontStyle === 'italic' ? 'Italic' : 'Regular'}`
       : `${FONT_WEIGHT[fontWeight]}${fontStyle === 'italic' ? 'Italic' : ''}`);
 
   return (

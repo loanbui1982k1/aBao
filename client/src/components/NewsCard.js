@@ -7,8 +7,8 @@ import Text from './Text';
 function NewsCard({ item, navigation }) {
   const { theme } = React.useContext(ThemeContext);
   return (
-    <Pressable onPress={() => navigation.push('Detail', { item: item })}>
-      <View style={{ marginBottom: 10 }}>
+    <View style={{ marginBottom: 14 }}>
+      <Pressable onPress={() => navigation.push('Detail', { item: item })}>
         <ImageBackground
           source={{
             uri:
@@ -45,7 +45,7 @@ function NewsCard({ item, navigation }) {
                 backgroundColor: theme.selectedBgColor + '80',
               }}
             >
-              {trimString(item.author, 30)}
+              {trimString(item.author, 20)}
             </Text>
             <Text
               style={{
@@ -58,8 +58,8 @@ function NewsCard({ item, navigation }) {
             </Text>
           </View>
         </ImageBackground>
-      </View>
-    </Pressable>
+      </Pressable>
+    </View>
   );
 }
 
@@ -75,9 +75,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   textAuthor: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    padding: 5,
     borderRadius: 4,
+    maxWidth: '50%',
   },
 });
 
