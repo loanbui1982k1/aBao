@@ -8,19 +8,8 @@ import CustomButton from '../utils/CustomButton';
 import View from '../components/View';
 import Tts from 'react-native-tts';
 import { useSelector } from 'react-redux';
-import { deleteFavourite, postFavourite } from '../services/api';
-
-function onlyText(string_res) {
-  var content_res = '';
-  var string_components = string_res.split('\n');
-  for (let i = 0; i < string_components.length; ++i) {
-    if (string_components[i].includes('<p>')) {
-      string_components[i] = string_components[i].substring(3);
-      content_res += string_components[i] + '\n';
-    }
-  }
-  return content_res;
-}
+import { deleteFavourite, getFavouriteCheck, postFavourite } from '../services/api';
+import Toast from 'react-native-toast-message';
 
 function urlify(text) {
   var urlRegex = /(https?:\/\/[^\s]+)/g;
@@ -43,6 +32,13 @@ function Detail(props) {
       Tts.stop();
     });
     item.content = urlify(item.content).replace('\\n', '');
+    if (idUser) {
+      getFavouriteCheck({ idUser: idUser, idNewspaper: item.idNewspaper })
+        .then((res) => {
+          setHeart(res.data.favourite);
+        })
+        .catch(() => {});
+    }
   }, [props]);
 
   useEffect(() => {
@@ -61,12 +57,10 @@ function Detail(props) {
   }, [speak]);
 
   useEffect(() => {
-    if (idUser) {
-      if (heart) {
-        postFavourite({ idUser: idUser, idNewspaper: item.idNewspaper });
-      } else {
-        deleteFavourite({ idUser: idUser, idNewspaper: item.idNewspaper });
-      }
+    if (heart) {
+      postFavourite({ idUser: idUser, idNewspaper: item.idNewspaper });
+    } else {
+      deleteFavourite({ idUser: idUser, idNewspaper: item.idNewspaper });
     }
   }, [heart]);
 
@@ -108,7 +102,15 @@ function Detail(props) {
         colors={['#FF3A44', '#FF8086']}
         style={[styles.linearGradient, { bottom: 40, right: 40 }]}
         onTouchStart={() => {
-          setHeart(!heart);
+          if (idUser) {
+            setHeart(!heart);
+          } else {
+            Toast.show({
+              type: 'errorToast',
+              text1: 'Bạn chưa đăng nhập',
+              visibilityTime: 2000,
+            });
+          }
         }}
       >
         <MaterialCommunityIcons
@@ -135,14 +137,27 @@ function Detail(props) {
             style={{
               ...styles.title,
               marginTop: -140,
-              backgroundColor: theme.selectedActiveColor,
+              backgroundColor: theme.selectedButtonColor,
             }}
           >
-            <Text style={{ display: updateView ? 'none' : 'flex' }}>
+            <Text
+              style={{
+                display: updateView ? 'none' : 'flex',
+                color: theme.selectedButtonTextColor,
+              }}
+            >
               {item.date?.slice(0, -15) || ''}
             </Text>
-            <SectionHeaderText style={{ marginVertical: 6 }}>{item.title}</SectionHeaderText>
-            <Text style={{ ...styles.boldText, display: updateView ? 'none' : 'flex' }}>
+            <SectionHeaderText style={{ marginVertical: 6, color: theme.selectedButtonTextColor }}>
+              {item.title}
+            </SectionHeaderText>
+            <Text
+              style={{
+                ...styles.boldText,
+                display: updateView ? 'none' : 'flex',
+                color: theme.selectedButtonTextColor,
+              }}
+            >
               Đăng bởi {item.writer || 'Ẩn danh'}
             </Text>
           </View>
@@ -188,6 +203,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
     marginTop: -40,
+    paddingBottom: 80,
   },
   text: {
     paddingTop: 12,

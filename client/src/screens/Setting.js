@@ -266,14 +266,6 @@ function Setting({ navigation }) {
           </View>
           <View style={{ ...styles.line, backgroundColor: theme.selectedTextColor }}></View>
         </View>
-        <View style={styles.section}>
-          <SectionHeaderText style={styles.title}>Phiên đăng nhập</SectionHeaderText>
-          <View style={styles.row}>
-            <Text style={styles.text}>Đăng xuất</Text>
-            <MaterialCommunityIcons color={theme.selectedTextColor} name="logout" size={28} />
-          </View>
-          <View style={{ ...styles.line, backgroundColor: theme.selectedTextColor }}></View>
-        </View>
       </ScrollView>
     </View>
   );

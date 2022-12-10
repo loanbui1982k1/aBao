@@ -3,6 +3,16 @@ const router = express.Router();
 const db = require('../models');
 const { Favourite } = require('../models');
 
+router.get('/', async (req, res) => {
+  const { query } = req;
+  const favourite = await Favourite.findOne({
+    where: { idUser: query.idUser, idNewspaper: query.idNewspaper },
+  });
+  if (favourite) {
+    return res.json({ favourite: true });
+  } else return res.json({ favourite: false });
+});
+
 router.get('/newspaper', async (req, res) => {
   const { query } = req;
   const result = await db.sequelize.query(

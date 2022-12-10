@@ -1,5 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ImageBackground, ScrollView } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  View,
+  StyleSheet,
+  ImageBackground,
+  ScrollView,
+  RefreshControl,
+  useWindowDimensions,
+} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useDispatch } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -17,24 +24,43 @@ import Text, { SectionHeaderText } from '../components/Text';
 import TextInput from '../components/TextInput';
 import { getCategory, getNews } from '../services/api';
 import CustomButton from '../utils/CustomButton';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 function Home({ navigation }) {
   const { theme, font } = React.useContext(ThemeContext);
-  const [hotNews, setHotNews] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
   const [news, setNews] = useState([]);
+  const [hotNews, setHotNews] = useState(null);
+  const window = useWindowDimensions();
+  const newsLengthRef = useRef(0);
 
   const [tags, setTags] = useState([]);
   const [selectedTag, setSelectedTag] = useState(null);
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    getCategory()
+  const getAllTags = async () => {
+    await getCategory()
       .then((res) => {
         setTags(res.data.map((i) => i.nameCategory));
         setSelectedTag(res.data[0].nameCategory);
       })
       .catch(() => {});
+  };
+
+  const getAllNews = async () => {
+    await getNews(selectedTag)
+      .then((res) => {
+        setNews(res.data);
+        setHotNews(res.data ? 0 : null);
+        newsLengthRef.current = res.data.length;
+      })
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    getAllTags();
     AsyncStorage.getItem('user').then((user) => {
       let userData = JSON.parse(user);
       if (userData) {
@@ -47,14 +73,26 @@ function Home({ navigation }) {
   }, []);
 
   useEffect(() => {
-    selectedTag &&
-      getNews(selectedTag)
-        .then((res) => {
-          setNews(res.data);
-          setHotNews([res.data[0]]);
-        })
-        .catch(() => {});
+    const interval = setInterval(() => {
+      if (1 < newsLengthRef.current) setHotNews((hotNews) => (hotNews + 1) % newsLengthRef.current);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    selectedTag && getAllNews();
   }, [selectedTag]);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    setSearchInput('');
+    getAllNews().then(() => setRefreshing(false));
+  };
+
+  const filteredNews = news.filter((item) =>
+    item.title.toLowerCase().includes(searchInput.toLowerCase())
+  );
 
   return (
     <View style={{ ...styles.container, backgroundColor: theme.selectedBgColor }}>
@@ -72,7 +110,12 @@ function Home({ navigation }) {
             height: font.lineHeight * 3,
           }}
         >
-          <TextInput style={{ display: 'flex', flex: 1 }} placeholder="Tìm kiếm" />
+          <TextInput
+            style={{ display: 'flex', flex: 1 }}
+            placeholder="Tìm kiếm"
+            value={searchInput}
+            onChangeText={(value) => setSearchInput(value)}
+          />
           <MaterialCommunityIcons
             name="magnify"
             color={theme.selectedButtonColor}
@@ -113,54 +156,63 @@ function Home({ navigation }) {
           </View>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
-          {hotNews.map((item, index) => (
+        <ScrollView showsVerticalScrollIndicator={false} horizontal={true}>
+          {hotNews !== null && (
             <View
-              key={index}
               style={{
-                height: 210,
+                width: window.width - 40,
               }}
             >
-              <ImageBackground
-                source={{
-                  uri:
-                    item.image ||
-                    'https://qph.cf2.quoracdn.net/main-qimg-3d69658bf00b1e706b75162a50d19d6c-pjlq',
-                }}
-                blurRadius={8}
-                resizeMode="cover"
-                style={styles.imageContent}
-                imageStyle={styles.imageStyle}
-              >
-                <View
-                  style={{
-                    ...styles.topNewsText,
-                    backgroundColor: theme.selectedButtonColor + '80',
+              <TouchableOpacity onPress={() => navigation.push('Detail', { item: news[hotNews] })}>
+                <ImageBackground
+                  source={{
+                    uri:
+                      news[hotNews].image ||
+                      'https://qph.cf2.quoracdn.net/main-qimg-3d69658bf00b1e706b75162a50d19d6c-pjlq',
                   }}
+                  blurRadius={3}
+                  resizeMode="cover"
+                  style={styles.imageContent}
+                  imageStyle={styles.imageStyle}
                 >
-                  <Text
+                  <View
                     style={{
-                      color: theme.selectedButtonTextColor,
-                      fontWeight: 'bold',
-                      fontStyle: 'italic',
+                      ...styles.topNewsText,
+                      backgroundColor: theme.selectedButtonColor,
                     }}
                   >
-                    Được đăng bởi {item.writer ? trimString(item.writer, 20) : 'Hehe'}
-                  </Text>
-                  <SectionHeaderText
+                    <Text
+                      style={{
+                        color: theme.selectedButtonTextColor,
+                        fontWeight: 'bold',
+                        fontStyle: 'italic',
+                      }}
+                    >
+                      Được đăng bởi{' '}
+                      {news[hotNews].writer ? trimString(news[hotNews].writer, 20) : 'Hehe'}
+                    </Text>
+                    <SectionHeaderText
+                      style={{
+                        color: theme.selectedButtonTextColor,
+                      }}
+                    >
+                      {trimString(news[hotNews].title)}
+                    </SectionHeaderText>
+                  </View>
+                  <View
                     style={{
-                      color: theme.selectedButtonTextColor,
+                      marginTop: 20,
+                      borderRadius: 10,
+                      padding: 10,
+                      backgroundColor: theme.selectedBgColor,
                     }}
                   >
-                    {trimString(item.title)}
-                  </SectionHeaderText>
-                </View>
-                <View>
-                  <Text>{trimString(item.description, 200)}</Text>
-                </View>
-              </ImageBackground>
+                    <Text>{trimString(news[hotNews].description, 200)}</Text>
+                  </View>
+                </ImageBackground>
+              </TouchableOpacity>
             </View>
-          ))}
+          )}
         </ScrollView>
       </View>
 
@@ -199,11 +251,28 @@ function Home({ navigation }) {
         </ScrollView>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {news.map((item, index) => {
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={theme.selectedActiveColor}
+          />
+        }
+      >
+        {filteredNews.map((item, index) => {
           return <NewsCard key={index} item={item} navigation={navigation} />;
         })}
       </ScrollView>
+
+      <LinearGradient
+        colors={['#FF3A44', '#FF8086']}
+        style={[styles.linearGradient, { position: 'absolute', zIndex: 1, bottom: 40, right: 40 }]}
+        onTouchStart={onRefresh}
+      >
+        <MaterialCommunityIcons name={'reload'} color={'white'} size={font.fontSize + 14} />
+      </LinearGradient>
     </View>
   );
 }
@@ -256,7 +325,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'space-evenly',
     paddingHorizontal: 10,
-    height: '100%',
+    paddingVertical: 20,
   },
   topNewsContainer: {
     display: 'flex',

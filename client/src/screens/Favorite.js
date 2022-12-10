@@ -10,16 +10,17 @@ import LinearGradient from 'react-native-linear-gradient';
 import { getCategory, getFavouriteNewsByTag, getFavouriteTags, getNews } from '../services/api';
 import CustomButton from '../utils/CustomButton';
 import { useSelector } from 'react-redux';
+import Toast from 'react-native-toast-message';
 
 function Favorite({ navigation }) {
   const { idUser } = useSelector((state) => state.taskReducer);
   const { theme, font } = React.useContext(ThemeContext);
   const [news, setNews] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
 
   const [tags, setTags] = useState([]);
   const [selectedTag, setSelectedTag] = useState(null);
-
-  const [refreshing, setRefreshing] = useState(false);
 
   const getTags = async () => {
     if (idUser) {
@@ -39,7 +40,7 @@ function Favorite({ navigation }) {
     }
   };
 
-  const getNews = async () => {
+  const getAllNews = async () => {
     if (idUser) {
       await getFavouriteNewsByTag({ idUser: idUser, nameCategory: selectedTag })
         .then((res) => {
@@ -57,17 +58,28 @@ function Favorite({ navigation }) {
 
   useEffect(() => {
     getTags();
+    if (!idUser) {
+      Toast.show({
+        type: 'errorToast',
+        text1: 'Bạn chưa đăng nhập',
+        visibilityTime: 2000,
+      });
+    }
   }, [idUser]);
 
   useEffect(() => {
-    if (selectedTag) getNews();
+    if (selectedTag) getAllNews();
   }, [selectedTag]);
 
   const onRefresh = () => {
     setRefreshing(true);
-
-    getTags().then(() => getNews().then(() => setRefreshing(false)));
+    setSearchInput('');
+    getTags().then(() => getAllNews().then(() => setRefreshing(false)));
   };
+
+  const filteredNews = news.filter((item) =>
+    item.title.toLowerCase().includes(searchInput.toLowerCase())
+  );
 
   return (
     <View style={{ ...styles.container, backgroundColor: theme.selectedBgColor }}>
@@ -88,7 +100,12 @@ function Favorite({ navigation }) {
             height: font.lineHeight * 3,
           }}
         >
-          <TextInput style={{ display: 'flex', flex: 1 }} placeholder="Tìm kiếm" />
+          <TextInput
+            style={{ display: 'flex', flex: 1 }}
+            placeholder="Tìm kiếm"
+            value={searchInput}
+            onChangeText={(value) => setSearchInput(value)}
+          />
           <MaterialCommunityIcons
             name="magnify"
             color={theme.selectedButtonColor}
@@ -155,7 +172,7 @@ function Favorite({ navigation }) {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {news.map((item, index) => {
+        {filteredNews.map((item, index) => {
           return <NewsCard key={index} item={item} navigation={navigation} />;
         })}
       </ScrollView>

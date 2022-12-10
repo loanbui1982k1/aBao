@@ -18,7 +18,7 @@ function NewsCard({ item, navigation }) {
               'https://qph.cf2.quoracdn.net/main-qimg-3d69658bf00b1e706b75162a50d19d6c-pjlq',
           }}
           resizeMode="cover"
-          blurRadius={8}
+          blurRadius={3}
           style={styles.imageNews}
           imageStyle={{
             borderRadius: 15,
@@ -28,7 +28,7 @@ function NewsCard({ item, navigation }) {
             style={{
               ...styles.newsTitle,
               color: theme.selectedTextColor,
-              backgroundColor: theme.selectedBgColor + '80',
+              backgroundColor: theme.selectedBgColor,
             }}
           >
             {trimString(item.title, 200)}
@@ -44,7 +44,7 @@ function NewsCard({ item, navigation }) {
               style={{
                 ...styles.textAuthor,
                 color: theme.selectedTextColor,
-                backgroundColor: theme.selectedBgColor + '80',
+                backgroundColor: theme.selectedBgColor,
               }}
             >
               {trimString(item.writer, 20)}
@@ -53,7 +53,7 @@ function NewsCard({ item, navigation }) {
               style={{
                 ...styles.textAuthor,
                 color: theme.selectedTextColor,
-                backgroundColor: theme.selectedBgColor + '80',
+                backgroundColor: theme.selectedBgColor,
               }}
             >
               {item.date?.slice(0, -15) || ''}
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   imageNews: {
     justifyContent: 'space-between',
     padding: 10,
-    height: 140,
+    // height: 140,
   },
   newsTitle: {
     fontStyle: 'italic',

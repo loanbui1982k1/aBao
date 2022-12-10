@@ -26,3 +26,9 @@ export const getFavouriteNewsByTag = async (params) => {
     params: params,
   });
 };
+
+export const getFavouriteCheck = async (params) => {
+  return await axios.get(`${API_URL}/favourite`, {
+    params: params,
+  });
+};
