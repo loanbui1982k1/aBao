@@ -131,9 +131,7 @@ function Profile({ navigation }) {
     let filename = username;
     try {
       await Storage().ref(filename).putFile(image);
-    } catch (e) {
-      console.log(e);
-    }
+    } catch (e) {}
   };
 
   const submit = () => {

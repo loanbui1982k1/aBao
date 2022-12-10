@@ -23,9 +23,7 @@ router.post('/', async (req, res) => {
       });
       res.json('SUCCESS');
     }
-  } catch (err) {
-    console.log(err);
-  }
+  } catch (err) {}
 });
 
 router.post('/login', async (req, res) => {

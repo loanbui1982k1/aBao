@@ -12,6 +12,7 @@ export default function ({ children, style, ...props }) {
 
   return (
     <TextInput
+      placeholderTextColor={theme.selectedTextColor + '60'}
       {...props}
       style={[
         {

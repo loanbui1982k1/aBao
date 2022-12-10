@@ -17,6 +17,8 @@ import { ThemeContext } from '../App';
 import LinearGradient from 'react-native-linear-gradient';
 import Text, { SectionHeaderText } from '../components/Text';
 import TextInput from '../components/TextInput';
+import { getCategory, getNews } from '../services/api';
+import CustomButton from '../utils/CustomButton';
 
 export const TAGS = [
   { title: 'Kinh tế', api: 'business', selected: true },
@@ -33,9 +35,18 @@ function Home({ navigation }) {
   const [hotNews, setHotNews] = useState([]);
   const [news, setNews] = useState([]);
 
+  const [tags, setTags] = useState([]);
+  const [selectedTag, setSelectedTag] = useState(null);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
+    getCategory()
+      .then((res) => {
+        setTags(res.data.map((i) => i.nameCategory));
+        setSelectedTag(res.data[0].nameCategory);
+      })
+      .catch(() => {});
     AsyncStorage.getItem('user').then((user) => {
       let userData = JSON.parse(user);
       if (userData) {
@@ -45,21 +56,17 @@ function Home({ navigation }) {
         dispatch(setProfilePhotoPathRedux(userData.profilePhotoPath));
       }
     });
-    axios
-      .get(BASE_URL + '/top-headlines?country=us&sortBy=popularity&pageSize=1' + API_KEY)
-      .then((res) => setHotNews(res.data.articles))
-      .catch(function (error) {
-        // handle error
-        console.log(error);
-      });
-    axios
-      .get(BASE_URL + '/top-headlines?country=us&pageSize=20' + API_KEY)
-      .then((res) => setNews(res.data.articles))
-      .catch(function (error) {
-        // handle error
-        console.log(error);
-      });
   }, []);
+
+  useEffect(() => {
+    selectedTag &&
+      getNews(selectedTag)
+        .then((res) => {
+          setNews(res.data);
+          setHotNews([res.data[0]]);
+        })
+        .catch(() => {});
+  }, [selectedTag]);
 
   return (
     <View style={{ ...styles.container, backgroundColor: theme.selectedBgColor }}>
@@ -129,7 +136,7 @@ function Home({ navigation }) {
               <ImageBackground
                 source={{
                   uri:
-                    item.urlToImage ||
+                    item.image ||
                     'https://qph.cf2.quoracdn.net/main-qimg-3d69658bf00b1e706b75162a50d19d6c-pjlq',
                 }}
                 blurRadius={8}
@@ -150,7 +157,7 @@ function Home({ navigation }) {
                       fontStyle: 'italic',
                     }}
                   >
-                    Được đăng bởi {trimString(item.author, 20)}
+                    Được đăng bởi {item.writer ? trimString(item.writer, 20) : 'Hehe'}
                   </Text>
                   <SectionHeaderText
                     style={{
@@ -177,23 +184,29 @@ function Home({ navigation }) {
         }}
       >
         <ScrollView showsHorizontalScrollIndicator={false} horizontal={true}>
-          {TAGS.map((item, index) => (
-            <View
+          {tags.map((item, index) => (
+            <CustomButton
               key={index}
+              onPress={() => {
+                setSelectedTag(item);
+              }}
               style={{
                 ...styles.tag,
                 borderColor: theme.selectedButtonColor,
-                backgroundColor: item.selected ? theme.selectedButtonColor : 'transparent',
+                backgroundColor: item === selectedTag ? theme.selectedButtonColor : 'transparent',
               }}
             >
               <Text
                 style={{
-                  color: item.selected ? theme.selectedButtonTextColor : theme.selectedButtonColor,
+                  color:
+                    item === selectedTag
+                      ? theme.selectedButtonTextColor
+                      : theme.selectedButtonColor,
                 }}
               >
-                {item.title}
+                {item}
               </Text>
-            </View>
+            </CustomButton>
           ))}
         </ScrollView>
       </View>
