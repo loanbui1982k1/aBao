@@ -31,7 +31,6 @@ function Detail(props) {
       Tts.setDefaultLanguage('vi-VN');
       Tts.stop();
     });
-    item.content = urlify(item.content).replace('\\n', '');
     if (idUser) {
       getFavouriteCheck({ idUser: idUser, idNewspaper: item.idNewspaper })
         .then((res) => {
@@ -44,13 +43,7 @@ function Detail(props) {
   useEffect(() => {
     if (speak) {
       Tts.speak(item.title);
-      var speakText = item.content;
-      speakText
-        .split(/(.{400})/)
-        .filter((x) => x.length == 400)
-        .forEach((i) => {
-          Tts.speak(i);
-        });
+      Tts.speak(item.content);
     } else {
       Tts.stop();
     }

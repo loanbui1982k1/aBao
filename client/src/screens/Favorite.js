@@ -26,6 +26,13 @@ function Favorite({ navigation }) {
     if (idUser) {
       await getFavouriteTags(idUser)
         .then((res) => {
+          if (res.data.length === 0) {
+            Toast.show({
+              type: 'errorToast',
+              text1: 'Bạn chưa có bài viết yêu thích',
+              visibilityTime: 2000,
+            });
+          }
           setTags(res.data.map((i) => i.nameCategory));
           setSelectedTag(res.data[0].nameCategory);
         })
@@ -74,6 +81,13 @@ function Favorite({ navigation }) {
   const onRefresh = () => {
     setRefreshing(true);
     setSearchInput('');
+    if (!idUser) {
+      Toast.show({
+        type: 'errorToast',
+        text1: 'Bạn chưa đăng nhập',
+        visibilityTime: 2000,
+      });
+    }
     getTags().then(() => getAllNews().then(() => setRefreshing(false)));
   };
 
